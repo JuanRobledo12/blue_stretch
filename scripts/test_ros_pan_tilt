@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+
+import rospy
+from stretch_body_msgs.msg import PanHead
+def main():
+    rospy.init_node('stretch_camera_pan', anonymous=True)
+    pub = rospy.Publisher('/stretch_head/pan_tilt', PanHead, queue_size=10)
+    rate = rospy.Rate(10) # 10hz
+    while not rospy.is_shutdown():
+        # set the pan angle to 0.5 radians
+        pan_command = PanHead()
+        pan_command.pan = 0.5
+        pub.publish(pan_command)
+        rate.sleep()
+if __name__ == '__main__':
+    try:
+        main()
+    except rospy.ROSInterruptException:
+        pass
