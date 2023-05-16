@@ -184,8 +184,8 @@ class StateMachine:
                 tts = gTTS(text=received_qry_msg, lang='en')
                 
                 #This file is saved in the directory where you run the code
-                tts.save('query_response.mp3')
-                playsound.playsound('query_response.mp3', True)
+                tts.save('./stretch_audio_files/query_response.mp3')
+                playsound.playsound('./stretch_audio_files/query_response.mp3', True)
                 self.machine_state = State.STATE_B
         
         #------------------- Display the GUI ----------------------#
@@ -200,13 +200,13 @@ class StateMachine:
                 take_to_location_q = "Ok. Do you want me to take you to that photo's location?"
                 tts = gTTS(text=take_to_location_q, lang='en')
                 #This file is saved in the directory where you run the code
-                tts.save('location_question.mp3')
-                playsound.playsound('location_question.mp3', True)
+                tts.save('./stretch_audio_files/location_question.mp3')
+                playsound.playsound('./stretch_audio_files/location_question.mp3', True)
                 self.machine_state = State.STATE_C
             except:
                 tts_1 = gTTS(text="I am sorry, I don't have photos of that object", lang='en')
-                tts_1.save('no_object.mp3')
-                playsound.playsound('no_object.mp3', True)
+                tts_1.save('./stretch_audio_files/no_object.mp3')
+                playsound.playsound('./stretch_audio_files/no_object.mp3', True)
                 self.machine_state = State.STATE_A
                 self.speechText_receiver = False
             
@@ -218,8 +218,8 @@ class StateMachine:
             if user_decision == 1:
                 tts = gTTS(text='Alright, let me take you there', lang='en')
                 #This file is saved in the directory where you run the code
-                tts.save('location_answer_1.mp3')
-                playsound.playsound('location_answer_1.mp3', True)
+                tts.save('./stretch_audio_files/location_answer_1.mp3')
+                playsound.playsound('./stretch_audio_files/location_answer_1.mp3', True)
 
                 # --------------- NAVIGATION LOOP STARTS ---------------- #
                 self.object_pose= Pose(Point(
@@ -334,14 +334,14 @@ class StateMachine:
                 self.machine_state = State.STATE_A
                 tts = gTTS(text='Here is where I took the photo', lang='en')
                 #This file is saved in the directory where you run the code
-                tts.save('location_answer_3.mp3')
-                playsound.playsound('location_answer_3.mp3', True)
+                tts.save('./stretch_audio_files/location_answer_3.mp3')
+                playsound.playsound('./stretch_audio_files/location_answer_3.mp3', True)
                 rospy.loginfo('State machine finished, waiting for next command')
             elif user_decision == -1:
                 tts = gTTS(text="Alright, the object should be on the living room table .Let me know if there is anything else I can do for you", lang='en')
                 #This file is saved in the directory where you run the code
-                tts.save('location_answer_2.mp3')
-                playsound.playsound('location_answer_2.mp3', True)
+                tts.save('./stretch_audio_files/location_answer_2.mp3')
+                playsound.playsound('./stretch_audio_files/location_answer_2.mp3', True)
                 
                 self.speechText_receiver = False
                 self.machine_state = State.STATE_A
