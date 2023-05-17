@@ -6,8 +6,6 @@
 # Last mod: 2023-May-05
 # Version: 2
 
-
-
 import os
 import json
 
@@ -128,7 +126,7 @@ class JSON_Handler:
                         'object_pose':object_pose,
                         })
         
-        sorted_output = sorted(output, key=lambda x: x[1])
+        sorted_output = sorted(output, key=lambda x: int(x['timestamp'].replace("_", "")))
         sorted_output.reverse()
         return sorted_output
     
@@ -137,8 +135,15 @@ class JSON_Handler:
 # TEST CODE
 # ---------------
 
-# handler = JSON_Handler(MAX_IMAGE_STORAGE, JSON_FILE_NAME, new_json=True)
+# handler = JSON_Handler(MAX_IMAGE_STORAGE, 'waypoint_info.json', new_json=True)
 # handler.add_image_data('waypoint_1', 'img_0', '000000', ['dog', 'b', 'c'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_0.jpg', '000000', ['dog', 'b', 'c'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_1.jpg', '000001', ['e', 'b', 'c'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_2.jpg', '000002', ['dog', 'b', 'c'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_3.jpg', '000003', ['g', 'b', 'dog'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_4.jpg', '000004', ['dog', 'b'], [.9, .8, .7])
+# handler.add_image_data('waypoint_3', 'img_5.jpg', '000005', ['f', 'b', 'c'], [.9, .8, .7])
+
 # handler.display()
-#print('imgs w/ dog:', handler.get_images_with_object('dog'))
+# print('imgs w/ dog:', handler.get_images_with_object('dog'))
 

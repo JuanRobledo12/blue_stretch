@@ -7,7 +7,7 @@
 # Version: 2
 
 import tkinter as tk
-from json_handler_class_2 import JSON_Handler
+from yolov7.json_handler_class import JSON_Handler
 from PIL import ImageTk, Image
 import os
 
@@ -104,5 +104,5 @@ class ImageGallery:
 # TEST CODE   
 # ----------------
 
-test = ImageGallery('cell phone', json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json')
-test.run()
+# test = ImageGallery('cell phone', json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json')
+# test.run()

@@ -10,7 +10,9 @@ import cv2
 import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
-from json_handler_class_edited import JSON_Handler
+
+#Changed this two version 2 of the json handler, let's see if it works.
+from json_handler_class import JSON_Handler
 
 # create instance of class
 json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=False)

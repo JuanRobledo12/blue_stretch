@@ -29,7 +29,7 @@ import hello_helpers.hello_misc as hm
 import stretch_body.robot
 from time import sleep
 
-################# CV BEGINS ##############################
+############################ CV BEGINS ##############################
 import numpy as np
 import datetime
 import os
@@ -41,7 +41,7 @@ import cv2
 import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
-from json_handler_class import JSON_Handler
+from yolov7.json_handler_class import JSON_Handler #This was using version 1 so let's see if it works well with version 2
 import sys
 sys.path.insert(0,'/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7')
 from yolov7.detection_blue import detect
