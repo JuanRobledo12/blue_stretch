@@ -31,3 +31,7 @@ To run this node, please follow these instructions:
 Make sure to replace `path_to_your_map.yaml` with the actual path to your map YAML file.
 
 This documentation provides clear instructions on how to use the `state_machine_v3.py` node and run the necessary commands to set up the environment correctly.
+
+## How to set up new waypoints
+
+Open the waypoints_info.json and set the amount of waypoints you want, provide both position and orientation coordinates which can be obtain from the move_base/goal topic when using the nav-to-goal functionality in Rviz.

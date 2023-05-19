@@ -8,8 +8,9 @@ The string is parsed to identify keywords from a preset list. It can retrieve sa
 Finally, the robot can guide the user to the location where the photo was taken or provide information about the object's whereabouts.
 
 Version Info:
-Last Modified: 2023-May-15
+Last Modified: 2023-May-17
 Version: V3 with navigation, speech, and pointing capabilities.
+
 """
 
 

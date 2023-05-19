@@ -7,7 +7,7 @@
 # Version: 2
 
 import tkinter as tk
-from yolov7.json_handler_class import JSON_Handler
+from json_handler_class import JSON_Handler
 from PIL import ImageTk, Image
 import os
 

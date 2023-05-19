@@ -41,10 +41,10 @@ import cv2
 import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
-from yolov7.json_handler_class import JSON_Handler #This was using version 1 so let's see if it works well with version 2
+from json_handler_class import JSON_Handler #This was using version 1 so let's see if it works well with version 2
 import sys
-sys.path.insert(0,'/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7')
-from yolov7.detection_blue import detect
+sys.path.insert(0,'/home/hello-robot/catkin_ws/yolov7')
+from img_classification import detect  #Check this line of code
 
 # create instance of class
 json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=True)
@@ -55,6 +55,7 @@ timestamp_array = ([[0 for i in range(cols)] for j in range(rows)])
 # Configure depth and color streams
 pipeline = rs.pipeline()
 config = rs.config()
+
 # Get device product line for setting a supporting resolution
 pipeline_wrapper = rs.pipeline_wrapper(pipeline)
 pipeline_profile = config.resolve(pipeline_wrapper)
@@ -173,7 +174,7 @@ class NavTest():
         #####################################
         
         # Publisher to manually control the robot (e.g. to stop it)
-        self.cmd_vel_pub = rospy.Publisher('cmd_vel', Twist)
+        self.cmd_vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
         
         # Subscribe to the move_base action server
         self.move_base = actionlib.SimpleActionClient("move_base", MoveBaseAction)
@@ -215,7 +216,7 @@ class NavTest():
         rospy.loginfo("Starting navigation test")
         
         # Begin the main loop and run through a sequence of locations
-        while not rospy.is_shutdown():
+        while True:
 
             # # If we've gone through the current sequence,
             # # start with a new random sequence
@@ -321,51 +322,61 @@ class NavTest():
             cv2.destroyAllWindows()  
 
             # Classify objects in images
-            for w in range(3):
+            for w in range(3): #Select the correct number of waypoints in your system.
                 if w == 0:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint1"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint1/"
+                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint1"
+                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint1/"
                 elif w==1:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint2"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint2/"
+                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint2"
+                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint2/"
                 elif w==2:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint3"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint3/"
+                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint3"
+                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint3/"
                 elif w==3:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint4"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint4/"
+                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint4"
+                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint4/"
                 elif w==4:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint5"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint5/"
+                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint5"
+                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint5/"
 
                 for i in range(2):
                     img_name = ""
                     source=""
                     img_no = str(i+1)
-
+                    ####### Print W and I and reduce the W range.
+                    print('LOOK AT THIS!!!(w, i): ', w , i)
                     date_time = timestamp_array[w][i]
                     img_name = date_time + "_img_" + img_no + ".png"
                     source = new_source + img_name
+                    print('---------------------------')
+                    print('date_time: ', date_time)
+                    print('source: ', source)
+                    print('new_project: ', new_project)
+                    print('img_name: ', img_name)
+
                     detect(source,new_project,date_time,img_name,w)
 
             self.shutdown()
             print("SHUTDOWNNNNNNNNN LOOOOOOL!!!!!!!")
-
+            break
+        
+        #Finish the program's run
+        quit()
     ###### CV FUNCTION ##############
     def get_image(self,waypoint):
         time.sleep(1)   
         img_counter = 0
         
         if waypoint == 0:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint1"
+            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint1"
         elif waypoint==1:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint2"
+            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint2"
         elif waypoint==2:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint3"
+            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint3"
         elif waypoint==3:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint4"
+            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint4"
         elif waypoint==4:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_demo/waypoint5"
+            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint5"
                 
         while(img_counter < 2):
       
