@@ -13,13 +13,12 @@ from json_handler_class import JSON_Handler
 # create instance of class
 json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=False)
 
-from yolov7.models.exerimental import attempt_load
-from models.experimental import attempt_load
-from utils.datasets import LoadStreams, LoadImages
-from utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
+from yolov7.models.experimental import attempt_load
+from yolov7.utils.datasets import LoadStreams, LoadImages
+from yolov7.utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
     scale_coords, xyxy2xywh, strip_optimizer, set_logging, increment_path
-from utils.plots import plot_one_box
-from utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
+from yolov7.utils.plots import plot_one_box
+from yolov7.utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
 
 
 
@@ -30,7 +29,7 @@ def detect(new_source,new_project, date_time,img_name,waypoint,save_img=True):
     json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=False)
     source, project = new_source, new_project
     
-    weights = '/home/hello-robot/catkin_ws/src/yolov7/yolov7-tiny.pt'
+    weights = '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/yolov7-tiny.pt'
     imgsz = 640
     img_size = 640
     trace = False
