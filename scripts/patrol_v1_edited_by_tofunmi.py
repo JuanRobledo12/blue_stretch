@@ -42,7 +42,10 @@ import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
 from json_handler_class import JSON_Handler #This was using version 1 so let's see if it works well with version 2
-from img_classification import detect  #Check this line of code
+import sys
+sys.path.insert(0,'/home/hello-robot/yolov7/')
+from detection_blue import detect
+
 
 # create instance of class
 json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=True)
@@ -322,20 +325,20 @@ class NavTest():
             # Classify objects in images
             for w in range(3): #Select the correct number of waypoints in your system.
                 if w == 0:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint1"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint1/"
+                    new_project = "/home/hello-robot/yolov7/images_result/waypoint1"
+                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint1/"
                 elif w==1:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint2"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint2/"
+                    new_project = "/home/hello-robot/yolov7/images_result/waypoint2"
+                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint2/"
                 elif w==2:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint3"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint3/"
+                    new_project = "/home/hello-robot/yolov7/images_result/waypoint3"
+                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint3/"
                 elif w==3:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint4"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint4/"
+                    new_project = "/home/hello-robot/yolov7/images_result/waypoint4"
+                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint4/"
                 elif w==4:
-                    new_project = "/home/hello-robot/catkin_ws/src/blue_stretch/images_result/waypoint5"
-                    new_source = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint5/"
+                    new_project = "/home/hello-robot/yolov7/images_result/waypoint5"
+                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint5/"
 
                 for i in range(2):
                     img_name = ""
@@ -366,15 +369,15 @@ class NavTest():
         img_counter = 0
         
         if waypoint == 0:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint1"
+            directory = "/home/hello-robot/yolov7/images_demo/waypoint1"
         elif waypoint==1:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint2"
+            directory = "/home/hello-robot/yolov7/images_demo/waypoint2"
         elif waypoint==2:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint3"
+            directory = "/home/hello-robot/yolov7/images_demo/waypoint3"
         elif waypoint==3:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint4"
+            directory = "/home/hello-robot/yolov7/images_demo/waypoint4"
         elif waypoint==4:
-            directory = "/home/hello-robot/catkin_ws/src/blue_stretch/images_demo/waypoint5"
+            directory = "/home/hello-robot/yolov7/images_demo/waypoint5"
                 
         while(img_counter < 2):
       
