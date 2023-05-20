@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 
-################## DESCRIPTION ##################
+"""
+Description:
+This ROS node enables user-robot communication using speech. 
+It subscribes to another speech-to-text node (saved in the respeaker_ros folder) to receive the string containing what the user says. 
+The string is parsed to identify keywords from a preset list. It can retrieve saved pictures that contain the keyword as the label and display them in a GUI using the GUI class. 
+Finally, the robot can guide the user to the location where the photo was taken or provide information about the object's whereabouts.
 
-# This ROS node is allows a user to communicate with the robot using speech.
-# The node is subscribed to another speech-to-text (saved in the respeaker_ros folder) node to receive the string containing what the user says.
-# The string is parsed to find if it contains a keyword from a list of preset keywords.
-# Then it can retreive the saved pictures containing the keyword as the label. Then show them in a GUI by calling the GUI class.
-# Finally, after the picture is selected the robot can guide the user to where the photo was taken or it can tell the user where the object is.
+Version Info:
+Last Modified: 2023-May-17
+Version: V3 with navigation, speech, and pointing capabilities.
 
-################## Version Info ##################
-# Last mod: 2023-May-15.
-# This is the V3 with navigation, speech, and pointing capabilities.
+"""
+
 
 import rospy
 from enum import Enum, auto
@@ -69,12 +71,6 @@ class StateMachine:
         # Pose coordinates are then displayed in the terminal
         # that was used to launch RViz.
         
-        # self.locations= [
-        #             #Pose(Point(0.126, -0.249, 0.000), Quaternion(0.000, 0.000, 0.013, 0.999)), # origin \
-        #             Pose(Point(0.701, 0.224, 0.000), Quaternion(0.000, 0.000, 0.716, 0.697)), # waypoint1 \
-        #             Pose(Point(0.737, -1.851, 0.000), Quaternion(0.000, 0.000, 0.999, 0.014)), # waypoint2 \
-        #             Pose(Point(0.921, -3.645, 0.000), Quaternion(0.000, 0.000, -0.702, 0.711)), # waypoint3 \
-        #             ]
         self.locations = []
         
         self.locations_to_visit = [0]
@@ -128,7 +124,7 @@ class StateMachine:
         self.text_sub = rospy.Subscriber('speech_to_text', SpeechRecognitionCandidates, self.speechText_callback)
         self.speechText_receiver = False
         self.user_msg = None
-        self.object_list = ['cell phone', 'wallet', 'keys', 'phone', 'purse', 'glasses', 'dog', 'mouse', 'book', 'bottles']
+        self.object_list = ['cup', 'cell phone', 'wallet', 'keys', 'phone', 'purse', 'glasses', 'dog', 'mouse', 'book', 'bottle', 'chair']
         rospy.loginfo("Interaction setup done, starting main program...")
         
 
@@ -167,7 +163,38 @@ class StateMachine:
             return -1
         else:
             return False
-        
+    
+#### --------------- Run FUNCTIONS -------------------- ####   
+    def run(self):
+        rate = rospy.Rate(1)  # 1 Hz
+        while not rospy.is_shutdown():
+            self.transition()
+            state_msg = String()
+            state_msg.data = str(self.machine_state)
+            self.pub.publish(state_msg)
+            rate.sleep()
+
+#### --------------- Manipulation FUNCTIONS -------------------- ####   
+    def move_arm(self,endpoint): 
+        point0 = JointTrajectoryPoint()
+        point0.positions = [0.2, 0.0, 3.14,0.0,0.0]
+        point0.velocities = [0.2, 0.2, 2.5, 1.0, 1.0]
+        point0.accelerations = [1.0, 1.0, 3.5, 1.0, 1.0]
+
+        point1 = JointTrajectoryPoint()
+        point1.positions = endpoint
+
+        trajectory_goal = FollowJointTrajectoryGoal()
+        trajectory_goal.trajectory.joint_names = ['joint_lift', 'wrist_extension', 'joint_wrist_yaw', 'joint_head_pan', 'joint_head_tilt']
+        trajectory_goal.trajectory.points = [point0, point1]
+        trajectory_goal.trajectory.header.stamp = rospy.Time(0.0)
+        trajectory_goal.trajectory.header.frame_id = 'base_link'
+
+        self.trajectory_client.send_goal(trajectory_goal)
+        rospy.loginfo('Sent list of goals = {0}'.format(trajectory_goal))
+        self.trajectory_client.wait_for_result()
+
+        time.sleep(1)  
 
 #### --------------- STATE MACHINE TRANSITION -------------------- ####
     def transition(self):
@@ -184,8 +211,8 @@ class StateMachine:
                 tts = gTTS(text=received_qry_msg, lang='en')
                 
                 #This file is saved in the directory where you run the code
-                tts.save('query_response.mp3')
-                playsound.playsound('query_response.mp3', True)
+                tts.save('./stretch_audio_files/query_response.mp3')
+                playsound.playsound('./stretch_audio_files/query_response.mp3', True)
                 self.machine_state = State.STATE_B
         
         #------------------- Display the GUI ----------------------#
@@ -200,13 +227,13 @@ class StateMachine:
                 take_to_location_q = "Ok. Do you want me to take you to that photo's location?"
                 tts = gTTS(text=take_to_location_q, lang='en')
                 #This file is saved in the directory where you run the code
-                tts.save('location_question.mp3')
-                playsound.playsound('location_question.mp3', True)
+                tts.save('./stretch_audio_files/location_question.mp3')
+                playsound.playsound('./stretch_audio_files/location_question.mp3', True)
                 self.machine_state = State.STATE_C
             except:
                 tts_1 = gTTS(text="I am sorry, I don't have photos of that object", lang='en')
-                tts_1.save('no_object.mp3')
-                playsound.playsound('no_object.mp3', True)
+                tts_1.save('./stretch_audio_files/no_object.mp3')
+                playsound.playsound('./stretch_audio_files/no_object.mp3', True)
                 self.machine_state = State.STATE_A
                 self.speechText_receiver = False
             
@@ -218,8 +245,8 @@ class StateMachine:
             if user_decision == 1:
                 tts = gTTS(text='Alright, let me take you there', lang='en')
                 #This file is saved in the directory where you run the code
-                tts.save('location_answer_1.mp3')
-                playsound.playsound('location_answer_1.mp3', True)
+                tts.save('./stretch_audio_files/location_answer_1.mp3')
+                playsound.playsound('./stretch_audio_files/location_answer_1.mp3', True)
 
                 # --------------- NAVIGATION LOOP STARTS ---------------- #
                 self.object_pose= Pose(Point(
@@ -238,21 +265,6 @@ class StateMachine:
                 for loc_idx in self.locations_to_visit:
                 # Get the next location in the current sequence
                     self.location = self.locations[loc_idx]
-                                
-                    # Keep track of the distance traveled.
-                    # Use updated initial pose if available.
-                    # if initial_pose.header.stamp == "":
-                    #     distance = sqrt(pow(location.position.x - 
-                    #                         locations[last_location].position.x, 2) +
-                    #                     pow(locations[location].position.y - 
-                    #                         locations[last_location].position.y, 2))
-                    # else:
-                    #     rospy.loginfo("Updating current pose.")
-                    #     distance = sqrt(pow(locations[location].position.x - 
-                    #                         initial_pose.pose.pose.position.x, 2) +
-                    #                     pow(locations[location].position.y - 
-                    #                         initial_pose.pose.pose.position.y, 2))
-                    #     initial_pose.header.stamp = ""
                     
                     distance = 000
 
@@ -296,27 +308,29 @@ class StateMachine:
                     # How long have we been running?
                     running_time = rospy.Time.now() - self.start_time
                     running_time = running_time.secs / 60.0
+                    self.locations.clear()
                 
-                # # Print a summary success/failure, distance traveled and time elapsed
-                # rospy.loginfo("Success so far: " + str(n_successes) + "/" + 
-                #               str(n_goals) + " = " + 
-                #               str(100 * n_successes/n_goals) + "%")
-                # rospy.loginfo("Running time: " + str(trunc(running_time, 1)) + 
-                #               " min Distance: " + str(trunc(distance_traveled, 1)) + " m")
-                # rospy.sleep(self.rest_time)
-
-                # self.shutdown()
-                # print("NODE SHUTDOWNNNNN LOOOL!!!")
-
                 # --------------- NAVIGATION LOOP ENDS ---------------- #
+
+
                 # --------------- INDICATION LOOP STARTS ---------------- #
 
                 #### Manipulation CODE!!!####
-               
+
+                #Switching from navigation mode to position mode to move the robotic arm
+                self.switch_base_to_manipulation = rospy.ServiceProxy('/switch_to_position_mode', Trigger)
+
+                # Wait for the service to become available
+                rospy.wait_for_service('/switch_to_position_mode')
+
+                # Then call the service
+                try:
+                    self.switch_base_to_manipulation()
+                except rospy.ServiceException as e:
+                    print("ERROR: Switch to Position Mode Service call failed: %s"%e)
+
                 # Rotate base CCW 90 degrees to align arm with waypoint
                 rospy.loginfo('issuing BOSS ARM MANIPULATION command...')
-                self.switch_base_to_manipulation = rospy.ServiceProxy('/switch_to_position_mode', Trigger)
-                self.switch_base_to_manipulation() 
 
                 rospy.loginfo('issuing BOSS ARM MANIPULATION - Rotate base command...')
                 self.jointcontrol.rotate_base([1.57])
@@ -324,7 +338,7 @@ class StateMachine:
                 rospy.loginfo('issuing BOSS ARM MANIPULATION - Move arm command...')
                 # INPUT = [joint_wrist_yaw, head_pan, head_tilt, gripper_aperture, wrist_extension, joint_lift]
                 self.jointcontrol.move_arm([0.0, -0.9, -0.9, 0.0, 0.05, 1.05])
-                        
+                   
 
                 #### ROTATE CAMERA CODE!!!####
                 #self.rotate_cam()
@@ -334,51 +348,37 @@ class StateMachine:
                 self.machine_state = State.STATE_A
                 tts = gTTS(text='Here is where I took the photo', lang='en')
                 #This file is saved in the directory where you run the code
-                tts.save('location_answer_3.mp3')
-                playsound.playsound('location_answer_3.mp3', True)
+                tts.save('./stretch_audio_files/location_answer_3.mp3')
+                playsound.playsound('./stretch_audio_files/location_answer_3.mp3', True)
                 rospy.loginfo('State machine finished, waiting for next command')
+                
+                
+                # Initialize the service proxy for returning to navigation mode
+                self.switch_base_to_navigation = rospy.ServiceProxy('/switch_to_navigation_mode', Trigger)
+
+                # Wait for the service to become available
+                rospy.wait_for_service('/switch_to_navigation_mode')
+
+                # Then call the service
+                try:
+                    self.switch_base_to_navigation()
+                except rospy.ServiceException as e:
+                    print("ERROR: Switch to Navigation Mode Service call failed: %s"%e)
+                            
             elif user_decision == -1:
-                tts = gTTS(text="Alright, the object should be on the living room table .Let me know if there is anything else I can do for you", lang='en')
+                tts = gTTS(text="Alright, the object should be on the " + self.object_location + ".", lang='en')
+                
+                
                 #This file is saved in the directory where you run the code
-                tts.save('location_answer_2.mp3')
-                playsound.playsound('location_answer_2.mp3', True)
+                tts.save('./stretch_audio_files/location_answer_2.mp3')
+                playsound.playsound('./stretch_audio_files/location_answer_2.mp3', True)
                 
                 self.speechText_receiver = False
                 self.machine_state = State.STATE_A
                 rospy.loginfo('State machine finished, waiting for next command')
                 
 
-    def run(self):
-        rate = rospy.Rate(1)  # 1 Hz
-        while not rospy.is_shutdown():
-            self.transition()
-            state_msg = String()
-            state_msg.data = str(self.machine_state)
-            self.pub.publish(state_msg)
-            rate.sleep()
-
-    ####### MANIPULATION FUNC #################### 
-    def move_arm(self,endpoint): 
-        point0 = JointTrajectoryPoint()
-        point0.positions = [0.2, 0.0, 3.14,0.0,0.0]
-        point0.velocities = [0.2, 0.2, 2.5, 1.0, 1.0]
-        point0.accelerations = [1.0, 1.0, 3.5, 1.0, 1.0]
-
-        point1 = JointTrajectoryPoint()
-        point1.positions = endpoint
-
-        trajectory_goal = FollowJointTrajectoryGoal()
-        trajectory_goal.trajectory.joint_names = ['joint_lift', 'wrist_extension', 'joint_wrist_yaw', 'joint_head_pan', 'joint_head_tilt']
-        trajectory_goal.trajectory.points = [point0, point1]
-        trajectory_goal.trajectory.header.stamp = rospy.Time(0.0)
-        trajectory_goal.trajectory.header.frame_id = 'base_link'
-
-        self.trajectory_client.send_goal(trajectory_goal)
-        rospy.loginfo('Sent list of goals = {0}'.format(trajectory_goal))
-        self.trajectory_client.wait_for_result()
-
-        time.sleep(1)  
-    ###### MANIPULATION FUNC ENDS ################
+    
 
 def trunc(f, n):
     # Truncates/pads a float f to n decimal places without rounding

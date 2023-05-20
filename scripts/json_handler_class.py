@@ -6,8 +6,6 @@
 # Last mod: 2023-May-05
 # Version: 2
 
-
-
 import os
 import json
 
@@ -19,10 +17,14 @@ class JSON_Handler:
     def __init__(self, max_image_storage, json_file_name, new_json=False):
         self.max_image_storage = max_image_storage
         self.json_file_name = json_file_name
-        self.waypoint_list = ["waypoint_1", "waypoint_2", "waypoint_3", "waypoint_4", "waypoint_5"]
-        self.waypoint_names = ["table1", "couch", "table2","kitchen_counter","stove"]
-        self.waypoint_positions = [[1.0441372394561768, 3.246427536010742,0],[0.7050193548202515, 2.021536350250244, 0],[0.1476496160030365, 1.8214967250823975, 0], [3.6145787239074707, 2.8259506225585938, 0], [4.306626796722412, 0.9125393033027649, 0]]
-        self.waypoint_orientations = [[0, 0, 0.975745967055294, 0.2189059336229358],[0, 0, -0.3955405787212978, 0.918448501868679],[0, 0, -0.6137154103723945, 0.7895273238282785], [0, 0, 0.98866042236501, -0.15016846955682814], [0, 0, 0.19079321277213537, 0.9816302511435182]]
+
+        #---------------------- Modify Here to add/remove waypoints ----------------------#
+        self.waypoint_list = ["waypoint_1", "waypoint_2", "waypoint_3"]
+        self.waypoint_names = ["surface one", "surface two", "surface three"]
+        self.waypoint_positions = [[3.046032428741455, -0.34903526306152344,0],[1.8704077005386353, -0.74894779920578, 0],[0.2761564552783966, -0.11147916316986084, 0]]
+        self.waypoint_orientations = [[0, 0, 0.44746755142390743, 0.8943001679652604],[0, 0, -0.6950183999436599, 0.7189919497044142],[0, 0, 0.7024402484234943, 0.711742718540021]]
+        #---------------------------------------------------------------------------------#
+        
         if new_json:
             self.build_new_json()
         self.update_data()
@@ -128,7 +130,7 @@ class JSON_Handler:
                         'object_pose':object_pose,
                         })
         
-        sorted_output = sorted(output, key=lambda x: x[1])
+        sorted_output = sorted(output, key=lambda x: int(x['timestamp'].replace("_", "")))
         sorted_output.reverse()
         return sorted_output
     
@@ -137,8 +139,15 @@ class JSON_Handler:
 # TEST CODE
 # ---------------
 
-# handler = JSON_Handler(MAX_IMAGE_STORAGE, JSON_FILE_NAME, new_json=True)
+# handler = JSON_Handler(MAX_IMAGE_STORAGE, 'waypoint_info.json', new_json=True)
 # handler.add_image_data('waypoint_1', 'img_0', '000000', ['dog', 'b', 'c'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_0.jpg', '000000', ['dog', 'b', 'c'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_1.jpg', '000001', ['e', 'b', 'c'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_2.jpg', '000002', ['dog', 'b', 'c'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_3.jpg', '000003', ['g', 'b', 'dog'], [.9, .8, .7])
+# handler.add_image_data('waypoint_2', 'img_4.jpg', '000004', ['dog', 'b'], [.9, .8, .7])
+# handler.add_image_data('waypoint_3', 'img_5.jpg', '000005', ['f', 'b', 'c'], [.9, .8, .7])
+
 # handler.display()
-#print('imgs w/ dog:', handler.get_images_with_object('dog'))
+# print('imgs w/ dog:', handler.get_images_with_object('dog'))
 

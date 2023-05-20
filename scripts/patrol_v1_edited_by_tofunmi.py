@@ -29,7 +29,7 @@ import hello_helpers.hello_misc as hm
 import stretch_body.robot
 from time import sleep
 
-################# CV BEGINS ##############################
+############################ CV BEGINS ##############################
 import numpy as np
 import datetime
 import os
@@ -41,10 +41,8 @@ import cv2
 import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
-from json_handler_class import JSON_Handler
-import sys
-sys.path.insert(0,'/home/hello-robot/yolov7/')
-from detection_blue import detect
+from json_handler_class import JSON_Handler #This was using version 1 so let's see if it works well with version 2from img_classifier import detect
+
 
 # create instance of class
 json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=True)
@@ -55,6 +53,7 @@ timestamp_array = ([[0 for i in range(cols)] for j in range(rows)])
 # Configure depth and color streams
 pipeline = rs.pipeline()
 config = rs.config()
+
 # Get device product line for setting a supporting resolution
 pipeline_wrapper = rs.pipeline_wrapper(pipeline)
 pipeline_profile = config.resolve(pipeline_wrapper)
@@ -112,7 +111,7 @@ class NavTest():
 
         # import Locations from the .json file
 
-        self.root_imgs = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/images/"
+        #self.root_imgs = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/images/"
 
         f = open("/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json")
         self.location_data = json.load(f)
@@ -173,7 +172,7 @@ class NavTest():
         #####################################
         
         # Publisher to manually control the robot (e.g. to stop it)
-        self.cmd_vel_pub = rospy.Publisher('cmd_vel', Twist)
+        self.cmd_vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
         
         # Subscribe to the move_base action server
         self.move_base = actionlib.SimpleActionClient("move_base", MoveBaseAction)
@@ -215,7 +214,7 @@ class NavTest():
         rospy.loginfo("Starting navigation test")
         
         # Begin the main loop and run through a sequence of locations
-        while not rospy.is_shutdown():
+        while True:
 
             # # If we've gone through the current sequence,
             # # start with a new random sequence
@@ -321,7 +320,7 @@ class NavTest():
             cv2.destroyAllWindows()  
 
             # Classify objects in images
-            for w in range(3):
+            for w in range(3): #Select the correct number of waypoints in your system.
                 if w == 0:
                     new_project = "/home/hello-robot/yolov7/images_result/waypoint1"
                     new_source = "/home/hello-robot/yolov7/images_demo/waypoint1/"
@@ -342,15 +341,25 @@ class NavTest():
                     img_name = ""
                     source=""
                     img_no = str(i+1)
-
+                    ####### Print W and I and reduce the W range.
+                    print('LOOK AT THIS!!!(w, i): ', w , i)
                     date_time = timestamp_array[w][i]
                     img_name = date_time + "_img_" + img_no + ".png"
                     source = new_source + img_name
+                    print('---------------------------')
+                    print('date_time: ', date_time)
+                    print('source: ', source)
+                    print('new_project: ', new_project)
+                    print('img_name: ', img_name)
+
                     detect(source,new_project,date_time,img_name,w)
 
             self.shutdown()
             print("SHUTDOWNNNNNNNNN LOOOOOOL!!!!!!!")
-
+            break
+        
+        #Finish the program's run
+        quit()
     ###### CV FUNCTION ##############
     def get_image(self,waypoint):
         time.sleep(1)   

@@ -1,0 +1,83 @@
+{
+    "waypoint_1": {
+      "name": "table1",
+      "pose": {
+        "position": [1.0441372394561768, 3.246427536010742, 0],
+        "orientation": [0, 0, 0.975745967055294, 0.2189059336229358]
+      },
+      "images": {
+        "0": {
+          "name": "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint1/14_19_31_img_1.png",
+          "time": "14_19_31",
+          "objects": ["cup", "chair", "dining table", "tv", "keyboard"],
+          "confidences": ["0.65", "0.73", "0.79", "0.92", "0.92"]
+        },
+        "1": {
+          "name": "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint1/14_19_31_img_2.png",
+          "time": "14_19_31",
+          "objects": ["cup", "chair", "dining table", "tv", "keyboard"],
+          "confidences": ["0.68", "0.69", "0.83", "0.92", "0.92"]
+        }
+      }
+    },
+    "waypoint_2": {
+      "name": "couch",
+      "pose": {
+        "position": [0.7050193548202515, 2.021536350250244, 0],
+        "orientation": [0, 0, -0.3955405787212978, 0.918448501868679]
+      },
+      "images": {
+        "0": {
+          "name": "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint2/14_20_08_img_1.png",
+          "time": "14_20_08",
+          "objects": ["couch", "remote"],
+          "confidences": ["0.27", "0.84"]
+        },
+        "1": {
+          "name": "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint2/14_20_08_img_2.png",
+          "time": "14_20_08",
+          "objects": ["couch"],
+          "confidences": ["0.85"]
+        }
+      }
+    },
+    "waypoint_3": {
+      "name": "table2",
+      "pose": {
+        "position": [0.1476496160030365, 1.8214967250823975, 0],
+        "orientation": [0, 0, -0.6137154103723945, 0.7895273238282785]
+      },
+      "images": {
+        "0": {
+          "name": "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint3/14_20_31_img_1.png",
+          "time": "14_20_31",
+          "objects": ["bottle", "dining table", "remote", "cell phone", "book", "book"],
+          "confidences": ["0.27", "0.34", "0.43", "0.45", "0.62", "0.65"]
+        }
+      }
+    },
+    "waypoint_4": {
+      "name": "kitchen_counter",
+      "pose": {
+        "position": [3.6145787239074707, 2.8259506225585938, 0],
+        "orientation": [0, 0, 0.98866042236501, -0.15016846955682814]
+      },
+      "images": {}
+    },
+    "waypoint_5": {
+      "name": "stove",
+      "pose": {
+        "position": [4.306626796722412, 0.9125393033027649, 0],
+        "orientation": [0, 0, 0.19079321277213537, 0.9816302511435182]
+      },
+      "images": {
+        "0": {
+          "name": "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/yolov7/images_result/waypoint5/14_24_43_img_2.png",
+          "time": "14_24_43",
+          "objects": ["cell phone", "bottle"],
+          "confidences": ["0.33", "0.76"]
+        }
+      }
+    }
+  }
+  
