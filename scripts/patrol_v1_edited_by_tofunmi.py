@@ -41,10 +41,7 @@ import cv2
 import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
-from json_handler_class import JSON_Handler #This was using version 1 so let's see if it works well with version 2
-import sys
-sys.path.insert(0,'/home/hello-robot/yolov7/')
-from detection_blue import detect
+from json_handler_class import JSON_Handler #This was using version 1 so let's see if it works well with version 2from img_classifier import detect
 
 
 # create instance of class
