@@ -104,5 +104,5 @@ class ImageGallery:
 # TEST CODE   
 # ----------------
 
-test = ImageGallery('chair', json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json')
-test.run()
+# test = ImageGallery('book', json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json')
+# test.run()

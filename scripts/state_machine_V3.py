@@ -124,7 +124,7 @@ class StateMachine:
         self.text_sub = rospy.Subscriber('speech_to_text', SpeechRecognitionCandidates, self.speechText_callback)
         self.speechText_receiver = False
         self.user_msg = None
-        self.object_list = ['cup', 'cell phone', 'wallet', 'keys', 'phone', 'purse', 'glasses', 'dog', 'mouse', 'book', 'bottles']
+        self.object_list = ['cup', 'cell phone', 'wallet', 'keys', 'phone', 'purse', 'glasses', 'dog', 'mouse', 'book', 'bottle', 'chair']
         rospy.loginfo("Interaction setup done, starting main program...")
         
 
@@ -308,6 +308,7 @@ class StateMachine:
                     # How long have we been running?
                     running_time = rospy.Time.now() - self.start_time
                     running_time = running_time.secs / 60.0
+                    self.locations.clear()
                 
                 # --------------- NAVIGATION LOOP ENDS ---------------- #
 
@@ -315,11 +316,21 @@ class StateMachine:
                 # --------------- INDICATION LOOP STARTS ---------------- #
 
                 #### Manipulation CODE!!!####
-               
+
+                #Switching from navigation mode to position mode to move the robotic arm
+                self.switch_base_to_manipulation = rospy.ServiceProxy('/switch_to_position_mode', Trigger)
+
+                # Wait for the service to become available
+                rospy.wait_for_service('/switch_to_position_mode')
+
+                # Then call the service
+                try:
+                    self.switch_base_to_manipulation()
+                except rospy.ServiceException as e:
+                    print("ERROR: Switch to Position Mode Service call failed: %s"%e)
+
                 # Rotate base CCW 90 degrees to align arm with waypoint
                 rospy.loginfo('issuing BOSS ARM MANIPULATION command...')
-                self.switch_base_to_manipulation = rospy.ServiceProxy('/switch_to_position_mode', Trigger)
-                self.switch_base_to_manipulation() 
 
                 rospy.loginfo('issuing BOSS ARM MANIPULATION - Rotate base command...')
                 self.jointcontrol.rotate_base([1.57])
@@ -327,7 +338,7 @@ class StateMachine:
                 rospy.loginfo('issuing BOSS ARM MANIPULATION - Move arm command...')
                 # INPUT = [joint_wrist_yaw, head_pan, head_tilt, gripper_aperture, wrist_extension, joint_lift]
                 self.jointcontrol.move_arm([0.0, -0.9, -0.9, 0.0, 0.05, 1.05])
-                        
+                   
 
                 #### ROTATE CAMERA CODE!!!####
                 #self.rotate_cam()
@@ -340,7 +351,20 @@ class StateMachine:
                 tts.save('./stretch_audio_files/location_answer_3.mp3')
                 playsound.playsound('./stretch_audio_files/location_answer_3.mp3', True)
                 rospy.loginfo('State machine finished, waiting for next command')
-            
+                
+                
+                # Initialize the service proxy for returning to navigation mode
+                self.switch_base_to_navigation = rospy.ServiceProxy('/switch_to_navigation_mode', Trigger)
+
+                # Wait for the service to become available
+                rospy.wait_for_service('/switch_to_navigation_mode')
+
+                # Then call the service
+                try:
+                    self.switch_base_to_navigation()
+                except rospy.ServiceException as e:
+                    print("ERROR: Switch to Navigation Mode Service call failed: %s"%e)
+                            
             elif user_decision == -1:
                 tts = gTTS(text="Alright, the object should be on the " + self.object_location + ".", lang='en')
                 
