@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
-################## DESCRIPTION ###################
-# ROS Node to navigate in a space and take photos on specific waypoints.
-# YOLO V7 is used to classify the objects inside the images and saved them in folders.
-# A JSON file is updated containing all the metadata of the images.
+'''
+Description:
+This is a ROS Node to navigate in a space and take photos on specific waypoints. YOLO V7 is used to classify the objects inside the images and saved them in folders.
+In addition, a JSON file is updated containing all the metadata of the images.
 
-################### Version Info ####################
-# Last mod: 2023-May-05
-# Version: 3
+Last mod: 2023-May-05
+Version: 3
+
+'''
+
 
 
 
@@ -21,8 +23,6 @@ from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Point, Quaternion
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from random import sample
 from math import pow, sqrt, radians
-# f/home/hello-robot/home/hello-robotrom tsp_solver import *
-#from test_merge_cv_arm_boss import *
 from control_msgs.msg import FollowJointTrajectoryGoal
 from trajectory_msgs.msg import JointTrajectoryPoint
 import hello_helpers.hello_misc as hm
@@ -41,7 +41,8 @@ import cv2
 import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
-from json_handler_class import JSON_Handler #This was using version 1 so let's see if it works well with version 2from img_classifier import detect
+from json_handler_class import JSON_Handler
+from img_classifier import detect
 
 
 # create instance of class
@@ -107,11 +108,6 @@ class NavTest():
         # Nav Goals in RViz when running in the simulator.
         # Pose coordinates are then displayed in the terminal
         # that was used to launch RViz.
-        # locations = dict()
-
-        # import Locations from the .json file
-
-        #self.root_imgs = "/home/hello-robot/catkin_ws/src/blue_stretch/scripts/images/"
 
         f = open("/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json")
         self.location_data = json.load(f)
@@ -121,9 +117,6 @@ class NavTest():
 
         # saving the locations in a list
         for loc in self.location_data.keys():
-            # pose_temp = list(self.location_data[loc]["pose"]["position"][0])
-            # print(pose_temp)
-            # orient_temp = self.location_data[loc]["pose"]["orientation"][0]
             locations.append(Pose(Point(
                                         self.location_data[loc]["pose"]["position"][0],
                                         self.location_data[loc]["pose"]["position"][1],
@@ -137,39 +130,7 @@ class NavTest():
                                         )))
             locations_name.append(self.location_data[loc]["name"])
         print(locations)
-        # locations= [\
-        #             Pose(Point(-0.1939, 0.7717, 0), Quaternion(0, 0, 0.9549, 0.2966)), # origin \
-        #             Pose(Point(2.6331, 2.6528, 0), Quaternion(0, 0, 0.4453, 0.8953)), # waypoint1 \
-        #             Pose(Point(0, 3.2595, -0.1717), Quaternion(0, 0, 0.7905, 0.6123)), # waypoint2 \
-        #             Pose(Point(-0.1939, 0.7717, 0), Quaternion(0, 0, 0.9549, 0.2966)), # waypoint3 \
-        #             ]
         
-
-
-        
-        # locations['hall_foyer'] = Pose(Point(0.643, 4.720, 0.000), Quaternion(0.000, 0.000, 0.223, 0.975))
-        # locations['hall_kitchen'] = Pose(Point(-1.994, 4.382, 0.000), Quaternion(0.000, 0.000, -0.670, 0.743))
-        # locations['hall_bedroom'] = Pose(Point(-3.719, 4.401, 0.000), Quaternion(0.000, 0.000, 0.733, 0.680))
-        # locations['living_room_1'] = Pose(Point(0.720, 2.229, 0.000), Quaternion(0.000, 0.000, 0.786, 0.618))
-        # locations['living_room_2'] = Pose(Point(1.471, 1.007, 0.000), Quaternion(0.000, 0.000, 0.480, 0.877))
-        # locations['dining_room_1'] = Pose(Point(-0.861, -0.019, 0.000), Quaternion(0.000, 0.000, 0.892, -0.451))
-
-        
-        
-        # locations_np = np.array([[0.126, -0.249],[0.701, 0.224],[0.737, -1.851],[0.921, -3.645]])
-
-        #####################################
-
-        # calling a sorted index list from some function
-
-        # path_finder = Path_finder('keys',locations_np,[1,2,3])
-        
-        # loc_list=path_finder.solve_tsp()
-
-        # loc_list = probabalistic_things()
-        #loc_list = [0,1,2]
-
-        #####################################
         
         # Publisher to manually control the robot (e.g. to stop it)
         self.cmd_vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
@@ -216,34 +177,12 @@ class NavTest():
         # Begin the main loop and run through a sequence of locations
         while True:
 
-            # # If we've gone through the current sequence,
-            # # start with a new random sequence
-            # if i == n_locations:
-            #     i = 0
-            #     sequence = sample(locations, n_locations)
-            #     # Skip over first location if it is the same as
-            #     # the last location
-            #     if sequence[0] == last_location:
-            #         i = 1
+            
 
             for loc_idx in range(len(locations)):
             # Get the next location in the current sequence
                 location = locations[loc_idx]
                             
-                # Keep track of the distance traveled.
-                # Use updated initial pose if available.
-                # if initial_pose.header.stamp == "":
-                #     distance = sqrt(pow(location.position.x - 
-                #                         locations[last_location].position.x, 2) +
-                #                     pow(locations[location].position.y - 
-                #                         locations[last_location].position.y, 2))
-                # else:
-                #     rospy.loginfo("Updating current pose.")
-                #     distance = sqrt(pow(locations[location].position.x - 
-                #                         initial_pose.pose.pose.position.x, 2) +
-                #                     pow(locations[location].position.y - 
-                #                         initial_pose.pose.pose.position.y, 2))
-                #     initial_pose.header.stamp = ""
                 
                 distance = 000
 
@@ -287,18 +226,6 @@ class NavTest():
                         distance_traveled += distance
                         rospy.loginfo("State:" + str(state))
                         self.rotate_cam()
-
-                        ########################################################### Calling Perception and interaction things
-                        #           Interaction as subpart of perception
-                        #object_found = main_cv_arm()
-
-                        #if object_found == True:
-                        #    print("OBJECT FOUND!!!!")
-                        #    self.shutdown()
-
-
-
-                        ###########################################################
                     else:
                       rospy.loginfo("Goal failed with error code: " + str(goal_states[state]))
                 
@@ -342,20 +269,13 @@ class NavTest():
                     source=""
                     img_no = str(i+1)
                     ####### Print W and I and reduce the W range.
-                    print('LOOK AT THIS!!!(w, i): ', w , i)
                     date_time = timestamp_array[w][i]
                     img_name = date_time + "_img_" + img_no + ".png"
                     source = new_source + img_name
-                    print('---------------------------')
-                    print('date_time: ', date_time)
-                    print('source: ', source)
-                    print('new_project: ', new_project)
-                    print('img_name: ', img_name)
 
                     detect(source,new_project,date_time,img_name,w)
 
             self.shutdown()
-            print("SHUTDOWNNNNNNNNN LOOOOOOL!!!!!!!")
             break
         
         #Finish the program's run

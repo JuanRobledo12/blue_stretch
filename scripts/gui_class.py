@@ -1,10 +1,10 @@
-######################## Description #######################
-# Python Class of GUI that helps displaying the images stored in the waypoint_info.json
+'''
+Python Class of GUI that helps displaying the images stored in the waypoint_info.json
 
+Last mod: 2023-May-05
+Version: 2
 
-####################### Version Info #######################
-# Last mod: 2023-May-05
-# Version: 2
+'''
 
 import tkinter as tk
 from json_handler_class import JSON_Handler
@@ -13,8 +13,7 @@ import os
 
 class ImageGallery:
     def __init__(self, object_name, json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json'):
-        # self.images = images
-        # initialize JSON Handler --> (max list amt, name of json, change to false)
+        
         self.handler = JSON_Handler(5, json_path, new_json=False)
         self.object_name = object_name
         
@@ -87,10 +86,6 @@ class ImageGallery:
         image_path = image_data['path']
         self.object_location = image_data['location']
         self.object_pose = image_data['object_pose']
-        #print(image_path, self.object_location, self.object_pose)
-        #Add code here to save the image to a file or perform any other desired action
-        #return image_location, image_pose
-        #print(type(image_location), type(image_pose))
         self.root.destroy()
 
     def run(self):
