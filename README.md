@@ -14,7 +14,7 @@ Repository for the ROS package designed to assist in locating misplaced objects 
 
 ## About
 
-This project was developed by Team Blue during the [BMED 4833 ROB & BMED 8813 ROB](https://sites.gatech.edu/robotic-caregivers/) course at Georgia Tech. The aim of this system is to provide assistance to older adults living with mild cognitive impairment (MCI) in finding misplaced objects. A more detailed explanation of this problem can be found in the extension of this project carried out during CS 7633 Human-Robot Interaction at Georgia Tech. Please refer to the [HRI Final Project Report](HRI_Final_Project_Report.pdf) for further information. Additionally, we invite you to watch our demo video showcasing the functionality of the system:
+This project was developed by Team Blue during the [BMED 4833 ROB & BMED 8813 ROB](https://sites.gatech.edu/robotic-caregivers/) course at Georgia Tech. The aim of this system is to provide assistance to older adults living with mild cognitive impairment (MCI) in finding misplaced objects. A more detailed explanation of this problem can be found in the extension of this project carried out during CS 7633 Human-Robot Interaction at Georgia Tech. Please refer to the [HRI Final Project Report](HRI_Final_Project_Report.pdf) for further information. Additionally, we invite you to click in the image below to watch our demo video showcasing the functionality of the system:
 
 [![Blue Stretch Demo Video](https://img.youtube.com/vi/ELt5CJxZVqI/0.jpg)](https://youtu.be/ELt5CJxZVqI)
 
