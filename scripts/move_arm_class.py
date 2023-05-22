@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+'''
+Description:
+Python Class to handle Stretch's arm
+
+
+Last mod: 2023-May-05
+Version: 1
+'''
+
 from enum import Enum
 from trajectory_msgs.msg import JointTrajectoryPoint
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal

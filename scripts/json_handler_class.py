@@ -1,10 +1,12 @@
-######################## Description #######################
-# Python Class to handle the waipoint_info.json file
+'''
+Description:
+Python Class to handle the waipoint_info.json file
 
 
-####################### Version Info #######################
-# Last mod: 2023-May-05
-# Version: 2
+Last mod: 2023-May-05
+Version: 2
+'''
+
 
 import os
 import json

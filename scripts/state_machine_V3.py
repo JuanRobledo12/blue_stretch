@@ -23,7 +23,7 @@ import os
 import playsound
 
 #GUI dependencies
-from gui_class import ImageGallery #Run this in the directory where the gui is unless you have the global path of fake_gui
+from gui_class import ImageGallery 
 
 #Navigation dependencies
 import actionlib

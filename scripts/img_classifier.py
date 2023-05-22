@@ -1,3 +1,13 @@
+'''
+Description:
+Object detection in captured images using YOLO v7
+
+Last mod: 2023-May-22
+Version: 1
+
+'''
+
+
 import time
 from pathlib import Path
 
