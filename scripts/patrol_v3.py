@@ -42,6 +42,7 @@ import torch
 import torch.backends.cudnn as cudnn
 from numpy import random
 from json_handler_class import JSON_Handler
+from img_classifier import detect
 
 
 # create instance of class
