@@ -1,7 +1,7 @@
 '''
 Python Class of GUI that helps displaying the images stored in the waypoint_info.json
 
-Last mod: 2023-May-05
+Last mod: 2023-Jun-30
 Version: 2
 
 '''
@@ -9,6 +9,8 @@ Version: 2
 import tkinter as tk
 from json_handler_class import JSON_Handler
 from PIL import ImageTk, Image
+import playsound
+from gtts import gTTS
 import os
 
 class ImageGallery:
@@ -20,8 +22,16 @@ class ImageGallery:
         self.raw_image_data = self.handler.get_images_with_object(self.object_name)
         self.num_images = len(self.raw_image_data)
         if self.num_images == 0:
-            print("Sorry, I have not seen it")
+            tts = gTTS(text='I apologize, but I couldn\'t find any matches for the {}.'.format(self.object_name), lang='en')
+            tts.save('./stretch_audio_files/no_object.mp3')
+            playsound.playsound('./stretch_audio_files/no_object.mp3', True)
             return
+        else:
+            object_in_gallery_msg = 'I\'ve found some photos of the {}. To help you locate it, I\'ll display the images on my screen'.format(self.object_name)
+            tts = gTTS(text=object_in_gallery_msg, lang='en')
+            tts.save('./stretch_audio_files/object_ingallery.mp3')
+            playsound.playsound('./stretch_audio_files/object_ingallery.mp3', True)
+        
         self.current_image_index = 0
         
         # Create a Tkinter window

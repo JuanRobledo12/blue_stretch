@@ -8,7 +8,7 @@ The string is parsed to identify keywords from a preset list. It can retrieve sa
 Finally, the robot can guide the user to the location where the photo was taken or provide information about the object's whereabouts.
 
 Version Info:
-Last Modified: 2023-May-17
+Last Modified: 2023-Jun-30
 Version: V3 with navigation, speech, and pointing capabilities.
 
 """
@@ -19,8 +19,10 @@ from enum import Enum, auto
 from std_msgs.msg import String
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
 from gtts import gTTS
-import os
 import playsound
+import csv
+import os
+
 
 #GUI dependencies
 from gui_class import ImageGallery 
@@ -121,11 +123,13 @@ class StateMachine:
         rospy.loginfo("Navigation setup done! Starting Interaction setup...")
         self.machine_state = State.STATE_A
         self.pub = rospy.Publisher('state_topic', String, queue_size=10)
+        
+        #------------------- Speech Interaction ----------------#
         self.text_sub = rospy.Subscriber('speech_to_text', SpeechRecognitionCandidates, self.speechText_callback)
         self.speechText_receiver = False
         self.user_msg = None
-        self.object_list = ['cup', 'cell phone', 'wallet', 'keys', 'phone', 'purse', 'glasses', 'dog', 'mouse', 'book', 'bottle', 'chair']
-        rospy.loginfo("Interaction setup done, starting main program...")
+        #self.object_list = ['books', 'book', 'chair', 'person', 'apple']
+        rospy.loginfo("Speech Interface setup done, starting main program...")
         
 
 #### --------------- NAVIGATION FUNCTIONS -------------------- ####
@@ -139,17 +143,42 @@ class StateMachine:
         self.cmd_vel_pub.publish(Twist())
         rospy.sleep(1)
 
-#### --------------- INTERACTION FUNCTIONS -------------------- ####
+#### --------------- SPEECH INTERACTION FUNCTIONS -------------------- ####
     def speechText_callback(self, msg):
         rospy.loginfo('Message received: %s', msg.transcript)
         self.speechText_receiver = True
         self.user_msg = msg.transcript[0]
         print(type(self.user_msg))
     
+    def create_items_list(self, filepath):
+        item_list = []
+        # Open the CSV file in read mode
+        with open(filepath, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+
+            # Skip the header row
+            next(reader)
+
+            # Read the items and add them to the list
+            for row in reader:
+                item_list.append(row[0])
+
+        print("Created Item list:", item_list)
+        return item_list
+    
+    def add_item_to_csv(self, item, filepath):
+    # Open the CSV file in append mode
+        with open(filepath, 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+
+            # Write the new item
+            writer.writerow([item])
+
+        print(f"Item '{item}' added to {filepath}!")
+
+
     def find_keyword(self):
         for object in self.object_list:
-                #index = self.user_msg.find(object)
-                #if index != -1:
                 if object in self.user_msg:
                     return object
                 else:
@@ -157,9 +186,9 @@ class StateMachine:
         return -1
     def determine_user_decision(self):
 
-        if "yes" in self.user_msg:
+        if "take me there" in self.user_msg:
             return 1
-        elif "no" in self.user_msg:
+        elif "tell me location" in self.user_msg:
             return -1
         else:
             return False
@@ -199,17 +228,24 @@ class StateMachine:
 #### --------------- STATE MACHINE TRANSITION -------------------- ####
     def transition(self):
 
+        
+        
         #--------------- Identify the keyword in users Query --------------# 
         if self.machine_state == State.STATE_A and self.speechText_receiver:
+            #--------------- Opening the items csv and turing it into a list -------------#
+            csv_filepath = './stretch_misc_files/items.csv'
+            self.object_list = self.create_items_list(csv_filepath)
+            
+
+            #-------------- Getting the item keyword ---------------#
             self.keyword = self.find_keyword()
             if self.keyword == -1:
                 rospy.loginfo('Query does not contain keyword')
+                self.speechText_receiver = False
             else:
                 rospy.loginfo('This is the keyword: %s', self.keyword)
-                received_qry_msg = 'Sure! I can help you find your ' + self.keyword + ', please look at my screen to see if it is in the photos I took'
-                print(received_qry_msg)
+                received_qry_msg = 'Sure! Please wait a moment, I am searching through my database of photos to see if I can locate it for you'
                 tts = gTTS(text=received_qry_msg, lang='en')
-                
                 #This file is saved in the directory where you run the code
                 tts.save('./stretch_audio_files/query_response.mp3')
                 playsound.playsound('./stretch_audio_files/query_response.mp3', True)
@@ -218,32 +254,34 @@ class StateMachine:
         #------------------- Display the GUI ----------------------#
         elif self.machine_state == State.STATE_B:
             rospy.loginfo('State B')
+            keyword_object_inGallery_flag = False
             # Create an instance of the ImageGallery class
             gallery = ImageGallery(self.keyword)
             # Run the image gallery
             try:
                 self.object_location, self.object_pose = gallery.run()
+                keyword_object_inGallery_flag = True
+                
+            except:
+                self.machine_state = State.STATE_A
+                self.speechText_receiver = False
+            
+            if keyword_object_inGallery_flag:
                 print(self.object_location, self.object_pose)
-                take_to_location_q = "Ok. Do you want me to take you to that photo's location?"
+                take_to_location_q = "You selected a photo. Say: \'take me there'\, if you want me to guide you or say: \'tell me location\', if you want to know where I took the picture"
                 tts = gTTS(text=take_to_location_q, lang='en')
                 #This file is saved in the directory where you run the code
                 tts.save('./stretch_audio_files/location_question.mp3')
                 playsound.playsound('./stretch_audio_files/location_question.mp3', True)
                 self.machine_state = State.STATE_C
-            except:
-                tts_1 = gTTS(text="I am sorry, I don't have photos of that object", lang='en')
-                tts_1.save('./stretch_audio_files/no_object.mp3')
-                playsound.playsound('./stretch_audio_files/no_object.mp3', True)
-                self.machine_state = State.STATE_A
-                self.speechText_receiver = False
-            
+
         
         #------------------- Navigation to goal ----------------------#
         elif self.machine_state == State.STATE_C:
             user_decision = self.determine_user_decision()
             print('user_decision: ', user_decision)
             if user_decision == 1:
-                tts = gTTS(text='Alright, let me take you there', lang='en')
+                tts = gTTS(text='Alright, Please follow me', lang='en')
                 #This file is saved in the directory where you run the code
                 tts.save('./stretch_audio_files/location_answer_1.mp3')
                 playsound.playsound('./stretch_audio_files/location_answer_1.mp3', True)
