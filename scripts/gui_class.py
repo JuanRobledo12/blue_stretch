@@ -22,14 +22,14 @@ class ImageGallery:
         self.raw_image_data = self.handler.get_images_with_object(self.object_name)
         self.num_images = len(self.raw_image_data)
         if self.num_images == 0:
-            tts = gTTS(text='I apologize, but I couldn\'t find any matches for the {}.'.format(self.object_name), lang='en')
-            tts.save('./stretch_audio_files/no_object.mp3')
-            playsound.playsound('./stretch_audio_files/no_object.mp3', True)
+            #tts = gTTS(text='I apologize, but I couldn\'t find any matches for the {}.'.format(self.object_name), lang='en')
+            #tts.save('./stretch_audio_files/no_object.mp3')
+            #playsound.playsound('./stretch_audio_files/no_object.mp3', True)
             return
         else:
-            object_in_gallery_msg = 'I\'ve found some photos of the {}. To help you locate it, I\'ll display the images on my screen'.format(self.object_name)
-            tts = gTTS(text=object_in_gallery_msg, lang='en')
-            tts.save('./stretch_audio_files/object_ingallery.mp3')
+            #object_in_gallery_msg = 'I\'ve found some photos of the {}. To help you locate it, I\'ll display the images on my screen'.format(self.object_name)
+            #tts = gTTS(text=object_in_gallery_msg, lang='en')
+            #tts.save('./stretch_audio_files/object_ingallery.mp3')
             playsound.playsound('./stretch_audio_files/object_ingallery.mp3', True)
         
         self.current_image_index = 0
@@ -51,12 +51,13 @@ class ImageGallery:
         self.location_label.pack()
 
         # Create buttons to navigate the images
-        self.prev_button = tk.Button(self.root, text='<<',font=("Arial",18),width=6, heigh=2,bg="red",command=self.prev_image)
-        self.prev_button.pack(side='left')
-        self.select_button = tk.Button(self.root, text='Select Image',font=("Arial",18),width=15,heigh=2,bg="light blue",command=self.select_image)
-        self.select_button.pack(side='left')
-        self.next_button = tk.Button(self.root, text='>>',font=("Arial",18),width=6,heigh=2,bg="green",command=self.next_image)
-        self.next_button.pack(side='left')
+        self.next_button = tk.Button(self.root, text='Next Image',font=("Arial",18),width=15,heigh=2,bg="medium purple",command=self.next_image)
+        self.next_button.pack(side='top', pady=20)
+        self.prev_button = tk.Button(self.root, text='Prev Image',font=("Arial",18),width=15, heigh=2,bg="medium purple",command=self.prev_image)
+        self.prev_button.pack(side='top')
+        self.select_button = tk.Button(self.root, text='Select Image',font=("Arial",18),width=15,heigh=2,bg="green yellow",command=self.select_image)
+        self.select_button.pack(side='top', pady=20)
+        
 
         # Display the first image
         self.show_image(self.raw_image_data[self.current_image_index])
@@ -78,7 +79,7 @@ class ImageGallery:
         self.location_label.config(text=location_text_label)
         
         image_path = image_data['path']
-        image = Image.open(image_path).resize((400, 400), Image.ANTIALIAS)
+        image = Image.open(image_path).resize((600, 600), Image.ANTIALIAS)
         photo = ImageTk.PhotoImage(image)
         self.image_label.config(image=photo)
         self.image_label.image = photo
@@ -109,5 +110,5 @@ class ImageGallery:
 # TEST CODE   
 # ----------------
 
-# test = ImageGallery('book', json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json')
-# test.run()
+#test = ImageGallery('book', json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json')
+#test.run()

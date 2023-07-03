@@ -1,34 +1,34 @@
 import pandas as pd
-from tkinter import *
+import customtkinter as ctk
 from tkinter import ttk
 
-class Application(Frame):
+class Application(ctk.CTk):
     def __init__(self):
-        self.master = Tk()
-        super().__init__(self.master)
-        self.pack()
+        super().__init__()
+        self.geometry("950x400")  # Set the window size
         self.create_widgets()
 
     def create_widgets(self):
-        self.add_element_entry = Entry(self)
-        self.add_element_entry.pack(side="top")
 
-        self.add_element_button = Button(self)
-        self.add_element_button["text"] = "Add element"
-        self.add_element_button["command"] = self.add_element
-        self.add_element_button.pack(side="top")
+        self.configure(bg="grey17")  # configure the window color
 
-        self.quit = Button(self, text="QUIT", fg="red",
-                              command=self.master.destroy)
-        self.quit.pack(side="bottom")
+        self.add_element_entry = ctk.CTkEntry(self)
+        self.add_element_entry.place(relx=0.75, rely=0.1, anchor='center')
+
+        self.add_element_button = ctk.CTkButton(self, text="Add element", command=self.add_element)
+        self.add_element_button.place(relx=0.75, rely=0.2, anchor='center')
+    
+
+        self.quit = ctk.CTkButton(self, text="QUIT", fg_color="red", command=self.destroy)
+        self.quit.place(relx=0.75, rely=0.3, anchor='center')
 
         # Creating the table
-        self.tree = ttk.Treeview(self.master)
+        self.tree = ttk.Treeview(self)
         self.tree["columns"]=("Item")
-        self.tree.column("#0", width=0, stretch=NO)
+        self.tree.column("#0", width=0, stretch='no')
         self.tree.column("Item", width=100)
         self.tree.heading("Item", text="Item", anchor='w')
-        self.tree.pack(side="top", fill="both", expand=1)
+        self.tree.place(relx=0.25, rely=0.5, anchor='center')
         
         self.update_table()
 
@@ -49,7 +49,5 @@ class Application(Frame):
     def run(self):
         self.mainloop()
 
-
-#Test
-window = Application()
-window.run()
+app = Application()
+app.run()
