@@ -26,6 +26,7 @@ import os
 
 #GUI dependencies
 from gui_class import ImageGallery 
+from update_csv_gui import Application
 
 #Navigation dependencies
 import actionlib
@@ -181,8 +182,8 @@ class StateMachine:
         for object in self.object_list:
                 if object in self.user_msg:
                     return object
-                else:
-                    continue
+                elif self.user_msg == 'add object':
+                    return 'add object'
         return -1
     def determine_user_decision(self):
 
@@ -241,7 +242,20 @@ class StateMachine:
             self.keyword = self.find_keyword()
             if self.keyword == -1:
                 rospy.loginfo('Query does not contain keyword')
+                repeat_queary_msg = 'Sorry, I couldn\'t understand your request. If you want me to keep track of a new object, please say "add object". I\'ll be happy to assist you with that.'
+                tts = gTTS(text=repeat_queary_msg, lang='en')
+                tts.save('./stretch_audio_files/no_query_message.mp3')
+                playsound.playsound('./stretch_audio_files/no_query_message.mp3', True)
                 self.speechText_receiver = False
+            elif self.keyword == 'add object':
+                add_object_response_msg = 'Alright! Please look at my screen to see the objects I am currently keeping track of. You can also add new objects'
+                tts = gTTS(text=add_object_response_msg, lang='en')
+                tts.save('./stretch_audio_files/add_object_response.mp3')
+                playsound.playsound('./stretch_audio_files/add_object_response.mp3', True)
+                add_object_gui = Application()
+                add_object_gui.run()
+                self.speechText_receiver = False
+
             else:
                 rospy.loginfo('This is the keyword: %s', self.keyword)
                 received_qry_msg = 'Sure! Please wait a moment, I am searching through my database of photos to see if I can locate it for you'
