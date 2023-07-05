@@ -22,14 +22,14 @@ class ImageGallery:
         self.raw_image_data = self.handler.get_images_with_object(self.object_name)
         self.num_images = len(self.raw_image_data)
         if self.num_images == 0:
-            #tts = gTTS(text='I apologize, but I couldn\'t find any matches for the {}.'.format(self.object_name), lang='en')
-            #tts.save('./stretch_audio_files/no_object.mp3')
-            #playsound.playsound('./stretch_audio_files/no_object.mp3', True)
+            tts = gTTS(text='I apologize, but I couldn\'t find any matches for the {}.'.format(self.object_name), lang='en')
+            tts.save('./stretch_audio_files/no_object.mp3')
+            playsound.playsound('./stretch_audio_files/no_object.mp3', True)
             return
         else:
-            #object_in_gallery_msg = 'I\'ve found some photos of the {}. To help you locate it, I\'ll display the images on my screen'.format(self.object_name)
-            #tts = gTTS(text=object_in_gallery_msg, lang='en')
-            #tts.save('./stretch_audio_files/object_ingallery.mp3')
+            object_in_gallery_msg = 'I\'ve found some photos of the {}. To help you locate it, I\'ll display the images on my screen'.format(self.object_name)
+            tts = gTTS(text=object_in_gallery_msg, lang='en')
+            tts.save('./stretch_audio_files/object_ingallery.mp3')
             playsound.playsound('./stretch_audio_files/object_ingallery.mp3', True)
         
         self.current_image_index = 0
