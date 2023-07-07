@@ -8,13 +8,14 @@ Version: 2
 
 import tkinter as tk
 from json_handler_class import JSON_Handler
-from PIL import ImageTk, Image
+from PIL import Image, ImageTk, ImageOps
 import playsound
 from gtts import gTTS
 import os
 
+
 class ImageGallery:
-    def __init__(self, object_name, json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json'):
+    def __init__(self, object_name, json_path='./waypoint_info.json'):
         
         self.handler = JSON_Handler(5, json_path, new_json=False)
         self.object_name = object_name
@@ -79,7 +80,7 @@ class ImageGallery:
         self.location_label.config(text=location_text_label)
         
         image_path = image_data['path']
-        image = Image.open(image_path).resize((600, 600), Image.ANTIALIAS)
+        image = Image.open(image_path).resize((600, 600), resample=Image.LANCZOS)
         photo = ImageTk.PhotoImage(image)
         self.image_label.config(image=photo)
         self.image_label.image = photo
@@ -110,5 +111,5 @@ class ImageGallery:
 # TEST CODE   
 # ----------------
 
-#test = ImageGallery('book', json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json')
+#test = ImageGallery('book', json_path='./waypoint_info.json')
 #test.run()

@@ -12,7 +12,7 @@ import os
 import json
 
 MAX_IMAGE_STORAGE = 5
-JSON_FILE_NAME = '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json'
+JSON_FILE_NAME = './waypoint_info.json'
 
 class JSON_Handler:
     

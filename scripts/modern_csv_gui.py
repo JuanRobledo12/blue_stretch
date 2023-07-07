@@ -40,8 +40,9 @@ class Application(ctk.CTk):
 
     def add_element(self):
         new_element = self.add_element_entry.get()
+        print(new_element)
         df = pd.read_csv('./stretch_misc_files/items.csv')
-        df = df.append({'Item': new_element}, ignore_index=True)
+        df = pd.concat([df, pd.DataFrame({'Item': [new_element]})], ignore_index=True)
         df.to_csv('./stretch_misc_files/items.csv', index=False)
         self.update_table()
 
@@ -63,5 +64,5 @@ class Application(ctk.CTk):
     def run(self):
         self.mainloop()
 
-#app = Application()
-#app.run()
+app = Application()
+app.run()
