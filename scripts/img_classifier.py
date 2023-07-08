@@ -34,14 +34,11 @@ def detect(new_source,new_project, date_time,img_name,waypoint,save_img=True):
     json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=False)
     source, project = new_source, new_project
     
-    weights = '/home/hello-robot/yolov7/yolov7-tiny.pt'
+    # weights = '/home/hello-robot/yolov7/yolov7-tiny.pt' # for tiny weights
+    weights = '/home/hello-robot/yolov7/yolov7.pt' # for normal weights
     imgsz = 640
     img_size = 640
     trace = False
-
-    # parser.add_argument('--weights', nargs='+', type=str, default='/home/hello-robot/yolov7/yolov7-tiny.pt', help='model.pt path(s)')
-    # parser.add_argument('--source', type=str, default='/home/hello-robot/yolov7/images_demo', help='source')  # file/folder, 0 for webcam
-    # parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
     conf_thres=0.25
     iou_thres=0.45
     device='cpu'
