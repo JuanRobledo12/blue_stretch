@@ -259,6 +259,7 @@ class StateMachine:
                     tts = gTTS(text=repeat_queary_msg, lang='en')
                     tts.save('./stretch_audio_files/no_query_message.mp3')
                     playsound.playsound('./stretch_audio_files/no_query_message.mp3', True)
+                    self.blue_speech_interaction_flag = False
                     self.speechText_receiver = False
                 elif self.keyword == 'add object':
                     add_object_response_msg = 'Alright! Please look at my screen'

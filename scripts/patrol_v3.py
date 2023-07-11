@@ -247,7 +247,7 @@ class NavTest():
             cv2.destroyAllWindows()  
 
             # Classify objects in images
-            for w in range(3): #Select the correct number of waypoints in your system.
+            for w in range(2): #Select the correct number of waypoints in your system.
                 if w == 0:
                     new_project = "/home/hello-robot/yolov7/images_result/waypoint1"
                     new_source = "/home/hello-robot/yolov7/images_demo/waypoint1/"
@@ -270,7 +270,7 @@ class NavTest():
                     img_no = str(i+1)
                     ####### Print W and I and reduce the W range.
                     date_time = timestamp_array[w][i]
-                    img_name = date_time + "_img_" + img_no + ".png"
+                    img_name = str(date_time) + "_img_" + str(img_no) + ".png"
                     source = new_source + img_name
 
                     detect(source,new_project,date_time,img_name,w)
