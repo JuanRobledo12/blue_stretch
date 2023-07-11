@@ -111,5 +111,5 @@ class ImageGallery:
 # TEST CODE   
 # ----------------
 
-#test = ImageGallery('book', json_path='./waypoint_info.json')
-#test.run()
+# test = ImageGallery('book', json_path='./waypoint_info.json')
+# test.run()

@@ -64,5 +64,5 @@ class Application(ctk.CTk):
     def run(self):
         self.mainloop()
 
-app = Application()
-app.run()
+# app = Application()
+# app.run()
