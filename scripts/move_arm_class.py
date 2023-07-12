@@ -68,13 +68,13 @@ class JointController(object):
             values=[math.pi, 0, -math.pi / 6, 0, JointController.MIN_WRIST_EXTENSION, JointController.MIN_LIFT], # gripper stowed, camera facing forward, camera horizontal to floor, gripper close
             wait=True)
         
-    # BOSS MADE THIS CLASS TO RECIEVE base rotate angle input and move
+    # BOSS MADE THIS FUNCTION TO RECIEVE base rotate angle input and move
     def rotate_base(self, angle):
         self.set_cmd(joints=[
             Joints.rotate_mobile_base
             ], values=angle, wait=True)      
         
-    # BOSS MADE THIS CLASS TO RECIEVE ENDPOINT INPUT AND MOVE
+    # BOSS MADE THIS FUNCTION TO RECIEVE ENDPOINT INPUT AND MOVE
     def move_arm(self, endpoint):
         self.set_cmd(joints=[
             Joints.joint_wrist_yaw,
@@ -84,6 +84,13 @@ class JointController(object):
             Joints.wrist_extension,
             Joints.joint_lift
             ], values=endpoint, wait=True)    
+    
+    # FUNCTION TO RECEIVE CAMERA'S ENDPOINT AND MOVE IT
+    def move_camera(self, endpoint):
+        self.set_cmd(joints=[
+            Joints.joint_head_pan,
+            Joints.joint_head_tilt
+        ], values=endpoint, wait=True)
     
     def set_cmd(self, joints, values, wait):
         point = JointTrajectoryPoint()

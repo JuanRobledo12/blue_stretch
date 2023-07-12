@@ -420,6 +420,8 @@ class StateMachine:
                 playsound.playsound('./stretch_audio_files/location_answer_3.mp3', True)
                 rospy.loginfo('State machine finished, waiting for next command')
                 
+                #Stow the arm to continue with next query.
+                self.jointcontrol.stow()  
                 
                 # Initialize the service proxy for returning to navigation mode
                 self.switch_base_to_navigation = rospy.ServiceProxy('/switch_to_navigation_mode', Trigger)
