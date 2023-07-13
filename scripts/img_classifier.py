@@ -33,10 +33,12 @@ def detect(new_source,new_project, date_time,img_name,waypoint,save_img=True):
     # create instance of class
     json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=False)
     source, project = new_source, new_project
-  
-    #weights = '/home/hello-robot/yolov7/yolov7-tiny.pt' #Enable it to use tiny weights
-    weights = '/home/hello-robot/yolov7/yolov7.pt' #Enable it to use full weights
-
+<<<<<<< HEAD
+    
+    weights = '/home/hello-robot/yolov7/yolov7-tiny.pt' #Enable it to use tiny weights
+    #weights = '/home/hello-robot/yolov7/yolov7.pt' #Enable it to use full weights
+=======
+>>>>>>> cfea40ab351af7a1d7a2bbea4f2c4239ef0a97a5
     imgsz = 640
     img_size = 640
     trace = False
