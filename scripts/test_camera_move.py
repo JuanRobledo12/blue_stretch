@@ -1,7 +1,17 @@
 #!/usr/bin/env python
 
-from move_arm_class import JointController, Joints
+from move_robot_body_class import JointController, Joints
 import rospy
+from time import sleep
+
+
+def test_endpoints(joint_controller, endpoint_ls):
+    for endpoint in endpoint_ls:
+        joint_controller.move_camera(endpoint)
+        sleep(3)
+        
+
+
 
 def main():
     # Initialize the node with rospy
@@ -11,14 +21,18 @@ def main():
     joint_controller = JointController()
 
     # Specify your camera endpoint. For example:
-    camera_endpoint = [-0.9, -0.9]  # [pan_val, tilt_val]
+    #camera_endpoint = [-0.9, -0.9]  # [pan_val, tilt_val]
 
     # Call the move_camera method of the JointController class
-    joint_controller.move_camera(camera_endpoint)
+    #joint_controller.move_camera(camera_endpoint)
 
 
-    joint_controller.stow()
+    #joint_controller.stow()
 
+    endpoint_list = [[-0.7, 0.0], [0, 0.0], [0.7, 0.0], [0.7, -0.3], [0, -0.3], [-0.7, -0.3], [-0.7, -0.7], [0, -0.7], [0.7, -0.7]]
+    test_endpoints(joint_controller, endpoint_list)
+    
+    
     # Keep the node alive
     rospy.spin()
 

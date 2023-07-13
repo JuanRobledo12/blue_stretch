@@ -41,7 +41,7 @@ from std_srvs.srv import Trigger, TriggerResponse
 from control_msgs.msg import FollowJointTrajectoryGoal
 from trajectory_msgs.msg import JointTrajectoryPoint
 import time
-from move_arm_class import JointController
+from move_robot_body_class import JointController
 
 class State(Enum):
     STATE_A = auto()
@@ -229,9 +229,7 @@ class StateMachine:
 
         self.trajectory_client.send_goal(trajectory_goal)
         rospy.loginfo('Sent list of goals = {0}'.format(trajectory_goal))
-        self.trajectory_client.wait_for_result()
-
-        time.sleep(1)  
+        self.trajectory_client.wait_for_result() 
 
 #### --------------- STATE MACHINE TRANSITION -------------------- ####
     def transition(self):
@@ -421,6 +419,7 @@ class StateMachine:
                 rospy.loginfo('State machine finished, waiting for next command')
                 
                 #Stow the arm to continue with next query.
+                time.sleep(3)
                 self.jointcontrol.stow()  
                 
                 # Initialize the service proxy for returning to navigation mode
