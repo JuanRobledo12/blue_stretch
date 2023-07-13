@@ -2,7 +2,7 @@
 Python Class of GUI that helps displaying the images stored in the waypoint_info.json
 
 Last mod: 2023-Jun-30
-Version: 2
+Version: 3 (updated to have bounding boxes only on object of interest)
 
 '''
 
@@ -10,6 +10,8 @@ import tkinter as tk
 from json_handler_class import JSON_Handler
 from PIL import ImageTk, Image
 import playsound
+import numpy as np
+from utils.plots import plot_one_box_PIL
 from gtts import gTTS
 import os
 
@@ -69,6 +71,9 @@ class ImageGallery:
     def show_image(self, image_data):
         title_text_label = f"Is this your {self.object_name}?"
         self.title_label.config(text=title_text_label)
+
+        # Get bounding box
+        box = image_data['box_coord']
         
         timestamp = image_data['timestamp']
         h, m, s = timestamp[:2], timestamp[3:5], timestamp[6:]
@@ -79,8 +84,12 @@ class ImageGallery:
         self.location_label.config(text=location_text_label)
         
         image_path = image_data['path']
-        image = Image.open(image_path).resize((600, 600), Image.ANTIALIAS)
-        photo = ImageTk.PhotoImage(image)
+        initial_image = Image.open(image_path)
+
+        # Plot bounding box of object of interest on image
+        image = plot_one_box_PIL(box,np.array(initial_image),color=[245,3,15])
+
+        photo = ImageTk.PhotoImage(Image.fromarray(image))
         self.image_label.config(image=photo)
         self.image_label.image = photo
 
