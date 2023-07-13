@@ -14,7 +14,7 @@ from gtts import gTTS
 import os
 
 class ImageGallery:
-    def __init__(self, object_name, json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json'):
+    def __init__(self, object_name, json_path='/home/tony/hello_robot_catkin_ws/src/blue_stretch/scripts/waypoint_info.json'):
         
         self.handler = JSON_Handler(5, json_path, new_json=False)
         self.object_name = object_name

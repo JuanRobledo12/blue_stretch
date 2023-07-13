@@ -26,7 +26,6 @@ from math import pow, sqrt, radians
 from control_msgs.msg import FollowJointTrajectoryGoal
 from trajectory_msgs.msg import JointTrajectoryPoint
 import hello_helpers.hello_misc as hm
-import stretch_body.robot
 from time import sleep
 from move_robot_body_class import JointController
 
@@ -48,7 +47,7 @@ from cv_bridge import CvBridge, CvBridgeError
 
 
 # create instance of class
-json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=True)
+json_handler = JSON_Handler(5, '/home/tony/hello_robot_catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=True)
 
 
 # CHANGE THIS WITH THE SPECIFIC WAYPOINTS AND PICTURES PER WAYPOINTS
@@ -102,7 +101,7 @@ class CollectData():
         # Pose coordinates are then displayed in the terminal
         # that was used to launch RViz.
 
-        f = open("/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json")
+        f = open("/home/tony/hello_robot_catkin_ws/src/blue_stretch/scripts/waypoint_info.json")
         self.location_data = json.load(f)
 
         locations = []
@@ -244,20 +243,20 @@ class CollectData():
             # Classify objects in images
             for w in range(waypoints_num): #Select the correct number of waypoints in your system.
                 if w == 0:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint1"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint1/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint1"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint1/"
                 elif w==1:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint2"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint2/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint2"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint2/"
                 elif w==2:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint3"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint3/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint3"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint3/"
                 elif w==3:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint4"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint4/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint4"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint4/"
                 elif w==4:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint5"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint5/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint5"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint5/"
 
                 for i in range(photos_per_waypoint): #change it according to the number of images you take per waypoint
                     img_name = ""
@@ -294,20 +293,19 @@ class CollectData():
     def get_image(self,waypoint, img_counter):
         
         if waypoint == 0:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint1"
+            directory = "/home/tony/yolov7/images_demo/waypoint1"
         elif waypoint==1:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint2"
+            directory = "/home/tony/yolov7/images_demo/waypoint2"
         elif waypoint==2:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint3"
+            directory = "/home/tony/yolov7/images_demo/waypoint3"
         elif waypoint==3:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint4"
+            directory = "/home/tony/yolov7/images_demo/waypoint4"
         elif waypoint==4:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint5"
+            directory = "/home/tony/yolov7/images_demo/waypoint5"
                 
         # Wait for frames
         
-        camera_img_resized = cv2.resize(self.camera_image,(500,500))
-        camera_img_rotated = cv2.rotate(camera_img_resized, cv2.ROTATE_90_CLOCKWISE)
+        camera_img_rotated = cv2.rotate(self.camera_image, cv2.ROTATE_90_CLOCKWISE)
         img_counter = img_counter + 1
 
         # Get time
@@ -332,23 +330,6 @@ class CollectData():
         #rospy.sleep(2)
         self.cmd_vel_pub.publish(Twist())
         rospy.sleep(1)
-
-    def rotate_cam(self):
-        robot=stretch_body.robot.Robot()
-        robot.head.move_by('head_tilt',-0.52)
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(45))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(0))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-45))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-90))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-135))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-180))
-        sleep(1.5)
 
 def trunc(f, n):
     # Truncates/pads a float f to n decimal places without rounding
