@@ -21,10 +21,10 @@ class JSON_Handler:
         self.json_file_name = json_file_name
 
         #---------------------- Modify Here to add/remove waypoints ----------------------#
-        self.waypoint_list = ["waypoint_1", "waypoint_2", "waypoint_3"]
-        self.waypoint_names = ["surface one", "surface two", "surface three"]
-        self.waypoint_positions = [[3.046032428741455, -0.34903526306152344,0],[1.8704077005386353, -0.74894779920578, 0],[0.2761564552783966, -0.11147916316986084, 0]]
-        self.waypoint_orientations = [[0, 0, 0.44746755142390743, 0.8943001679652604],[0, 0, -0.6950183999436599, 0.7189919497044142],[0, 0, 0.7024402484234943, 0.711742718540021]]
+        self.waypoint_list = ["waypoint_1", "waypoint_2"]
+        self.waypoint_names = ["surface one", "surface two"]
+        self.waypoint_positions = [[1.8704077005386353, -0.74894779920578, 0],[0.2761564552783966, -0.11147916316986084, 0]]
+        self.waypoint_orientations = [[0, 0, -0.6950183999436599, 0.7189919497044142],[0, 0, 0.7024402484234943, 0.711742718540021]]
         #---------------------------------------------------------------------------------#
         
         if new_json:

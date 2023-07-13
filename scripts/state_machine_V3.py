@@ -41,7 +41,7 @@ from std_srvs.srv import Trigger, TriggerResponse
 from control_msgs.msg import FollowJointTrajectoryGoal
 from trajectory_msgs.msg import JointTrajectoryPoint
 import time
-from move_arm_class import JointController
+from move_robot_body_class import JointController
 
 class State(Enum):
     STATE_A = auto()
@@ -229,9 +229,7 @@ class StateMachine:
 
         self.trajectory_client.send_goal(trajectory_goal)
         rospy.loginfo('Sent list of goals = {0}'.format(trajectory_goal))
-        self.trajectory_client.wait_for_result()
-
-        time.sleep(1)  
+        self.trajectory_client.wait_for_result() 
 
 #### --------------- STATE MACHINE TRANSITION -------------------- ####
     def transition(self):
@@ -259,6 +257,7 @@ class StateMachine:
                     tts = gTTS(text=repeat_queary_msg, lang='en')
                     tts.save('./stretch_audio_files/no_query_message.mp3')
                     playsound.playsound('./stretch_audio_files/no_query_message.mp3', True)
+                    self.blue_speech_interaction_flag = False
                     self.speechText_receiver = False
                 elif self.keyword == 'add object':
                     add_object_response_msg = 'Alright! Please look at my screen'
@@ -419,6 +418,9 @@ class StateMachine:
                 playsound.playsound('./stretch_audio_files/location_answer_3.mp3', True)
                 rospy.loginfo('State machine finished, waiting for next command')
                 
+                #Stow the arm to continue with next query.
+                time.sleep(3)
+                self.jointcontrol.stow()  
                 
                 # Initialize the service proxy for returning to navigation mode
                 self.switch_base_to_navigation = rospy.ServiceProxy('/switch_to_navigation_mode', Trigger)

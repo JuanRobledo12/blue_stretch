@@ -28,6 +28,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 import hello_helpers.hello_misc as hm
 import stretch_body.robot
 from time import sleep
+from move_robot_body_class import JointController
 
 ############################ CV BEGINS ##############################
 import numpy as np
@@ -48,7 +49,12 @@ from img_classifier import detect
 # create instance of class
 json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=True)
 
-rows,cols = (5,2)
+
+# CHANGE THIS WITH THE SPECIFIC WAYPOINTS AND PICTURES PER WAYPOINTS
+waypoints_num = 2
+photos_per_waypoint = 9
+
+rows,cols = (5,photos_per_waypoint)  # (waypoints, photos per waypoint)
 timestamp_array = ([[0 for i in range(cols)] for j in range(rows)])
 
 # Configure depth and color streams
@@ -86,6 +92,7 @@ previous_y = 0
 
 class NavTest():
     def __init__(self):
+
         rospy.init_node('nav_test', anonymous=True)
         hm.HelloNode.__init__(self)
         
@@ -96,6 +103,12 @@ class NavTest():
         
         # Are we running in the fake simulator?
         self.fake_test = rospy.get_param("~fake_test", False)
+        
+        
+        # create instance of joint controller class and a list of endpoints to move the camera
+        self.joint_controller = JointController()
+        self.endpoints_ls = [[-0.7, 0.0], [0, 0.0], [0.7, 0.0], [0.7, -0.3], [0, -0.3], [-0.7, -0.3], [-0.7, -0.7], [0, -0.7], [0.7, -0.7]]
+        
         
         # Goal state return values
         goal_states = ['PENDING', 'ACTIVE', 'PREEMPTED', 
@@ -218,14 +231,17 @@ class NavTest():
                         rospy.loginfo("Goal succeeded!")
 
                         #### CV CODE!!!!!#####
-
-                        self.get_image(loc_idx)
-                        
+                        img_counter = 0
+                        for endpoint in self.endpoints_ls:
+                            self.joint_controller.move_camera(endpoint)
+                            time.sleep(2)
+                            self.get_image(loc_idx, img_counter)
+                            img_counter += 1
+                        self.joint_controller.move_camera([0.0, 0.0])
                         #################################
                         n_successes += 1
                         distance_traveled += distance
                         rospy.loginfo("State:" + str(state))
-                        self.rotate_cam()
                     else:
                       rospy.loginfo("Goal failed with error code: " + str(goal_states[state]))
                 
@@ -247,7 +263,7 @@ class NavTest():
             cv2.destroyAllWindows()  
 
             # Classify objects in images
-            for w in range(3): #Select the correct number of waypoints in your system.
+            for w in range(waypoints_num): #Select the correct number of waypoints in your system.
                 if w == 0:
                     new_project = "/home/hello-robot/yolov7/images_result/waypoint1"
                     new_source = "/home/hello-robot/yolov7/images_demo/waypoint1/"
@@ -264,26 +280,27 @@ class NavTest():
                     new_project = "/home/hello-robot/yolov7/images_result/waypoint5"
                     new_source = "/home/hello-robot/yolov7/images_demo/waypoint5/"
 
-                for i in range(2):
+                for i in range(photos_per_waypoint): #change it according to the number of images you take per waypoint
                     img_name = ""
                     source=""
                     img_no = str(i+1)
                     ####### Print W and I and reduce the W range.
                     date_time = timestamp_array[w][i]
-                    img_name = date_time + "_img_" + img_no + ".png"
+                    img_name = str(date_time) + "_img_" + str(img_no) + ".png"
                     source = new_source + img_name
 
                     detect(source,new_project,date_time,img_name,w)
 
+            rospy.loginfo('OBJECT DETECTION SUCCESFULLY COMPLETED!! You can shutdown the node now...')
             self.shutdown()
             break
         
         #Finish the program's run
         quit()
+    
+    
     ###### CV FUNCTION ##############
-    def get_image(self,waypoint):
-        time.sleep(1)   
-        img_counter = 0
+    def get_image(self,waypoint, img_counter):
         
         if waypoint == 0:
             directory = "/home/hello-robot/yolov7/images_demo/waypoint1"
@@ -296,35 +313,34 @@ class NavTest():
         elif waypoint==4:
             directory = "/home/hello-robot/yolov7/images_demo/waypoint5"
                 
-        while(img_counter < 2):
-      
-            # Wait for frames
-            try:
-                frames = pipeline.wait_for_frames()
-            except:
-                # Reset camera
-                print("reset start")
-                ctx = rs.context()
-                devices = ctx.query_devices()
-                for dev in devices:
-                    dev.hardware_reset()
-                    print("reset done")
-                frames = pipeline.wait_for_frames(timeout_ms = 5000)
-            color_frame = frames.get_color_frame()
-            color_image = np.asanyarray(color_frame.get_data())
-            frame = cv2.resize(color_image,(500,500))
-            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-            img_counter = img_counter + 1
+        # Wait for frames
+        try:
+            frames = pipeline.wait_for_frames()
+        except:
+            # Reset camera
+            print("reset start")
+            ctx = rs.context()
+            devices = ctx.query_devices()
+            for dev in devices:
+                dev.hardware_reset()
+                print("reset done")
+            frames = pipeline.wait_for_frames(timeout_ms = 5000)
+        color_frame = frames.get_color_frame()
+        color_image = np.asanyarray(color_frame.get_data())
+        frame = cv2.resize(color_image,(500,500))
+        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+        img_counter = img_counter + 1
 
-            # Get time
-            date_time = datetime.datetime.now().strftime("%H_%M_%S")
-            timestamp_array[waypoint][img_counter-1] = date_time
-            filename = date_time + "_img_" + str(img_counter) + ".png"  
+        # Get time
+        date_time = datetime.datetime.now().strftime("%H_%M_%S")
+        timestamp_array[waypoint][img_counter-1] = date_time
+        filename = date_time + "_img_" + str(img_counter) + ".png"  
 
-            # Save data
-            os.chdir(directory)
-            cv2.imwrite(filename,frame)
-            print('image saved',directory)
+        # Save data
+        os.chdir(directory)
+        cv2.imwrite(filename,frame)
+        print('image saved',directory)
+
 
     ###### CV FUNC ENDS ################
 
