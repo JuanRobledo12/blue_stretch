@@ -26,7 +26,7 @@ from math import pow, sqrt, radians
 from control_msgs.msg import FollowJointTrajectoryGoal
 from trajectory_msgs.msg import JointTrajectoryPoint
 import hello_helpers.hello_misc as hm
-import stretch_body.robot
+#import stretch_body.robot
 from time import sleep
 
 ############################ CV BEGINS ##############################
@@ -46,7 +46,7 @@ from img_classifier import detect
 
 
 # create instance of class
-json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=True)
+json_handler = JSON_Handler(5, '/home/tony/hello_robot_catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=True)
 
 rows,cols = (5,2)
 timestamp_array = ([[0 for i in range(cols)] for j in range(rows)])
@@ -109,7 +109,7 @@ class NavTest():
         # Pose coordinates are then displayed in the terminal
         # that was used to launch RViz.
 
-        f = open("/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json")
+        f = open("/home/tony/catkin_ws/src/blue_stretch/scripts/waypoint_info.json")
         self.location_data = json.load(f)
 
         locations = []
@@ -225,7 +225,7 @@ class NavTest():
                         n_successes += 1
                         distance_traveled += distance
                         rospy.loginfo("State:" + str(state))
-                        self.rotate_cam()
+                        #self.rotate_cam()
                     else:
                       rospy.loginfo("Goal failed with error code: " + str(goal_states[state]))
                 
@@ -242,27 +242,27 @@ class NavTest():
                 rospy.sleep(self.rest_time)
             
             ######   CV BEGINS ######
-            # Destroy all the windows
+            # Destroy all the windows, stops camera streming pipeline
             pipeline.stop()
             cv2.destroyAllWindows()  
 
             # Classify objects in images
             for w in range(3): #Select the correct number of waypoints in your system.
                 if w == 0:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint1"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint1/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint1"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint1/"
                 elif w==1:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint2"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint2/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint2"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint2/"
                 elif w==2:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint3"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint3/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint3"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint3/"
                 elif w==3:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint4"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint4/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint4"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint4/"
                 elif w==4:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint5"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint5/"
+                    new_project = "/home/tony/yolov7/images_result/waypoint5"
+                    new_source = "/home/tony/yolov7/images_demo/waypoint5/"
 
                 for i in range(2):
                     img_name = ""
@@ -286,15 +286,15 @@ class NavTest():
         img_counter = 0
         
         if waypoint == 0:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint1"
+            directory = "/home/tony/yolov7/images_demo/waypoint1"
         elif waypoint==1:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint2"
+            directory = "/home/tony/yolov7/images_demo/waypoint2"
         elif waypoint==2:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint3"
+            directory = "/home/tony/yolov7/images_demo/waypoint3"
         elif waypoint==3:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint4"
+            directory = "/home/tony/yolov7/images_demo/waypoint4"
         elif waypoint==4:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint5"
+            directory = "/home/tony/yolov7/images_demo/waypoint5"
                 
         while(img_counter < 2):
       
@@ -338,22 +338,22 @@ class NavTest():
         self.cmd_vel_pub.publish(Twist())
         rospy.sleep(1)
 
-    def rotate_cam(self):
-        robot=stretch_body.robot.Robot()
-        robot.head.move_by('head_tilt',-0.52)
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(45))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(0))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-45))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-90))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-135))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-180))
-        sleep(1.5)
+    # def rotate_cam(self):
+    #     robot=stretch_body.robot.Robot()
+    #     robot.head.move_by('head_tilt',-0.52)
+    #     sleep(1.5)
+    #     robot.head.move_by('head_pan',radians(45))
+    #     sleep(1.5)
+    #     robot.head.move_by('head_pan',radians(0))
+    #     sleep(1.5)
+    #     robot.head.move_by('head_pan',radians(-45))
+    #     sleep(1.5)
+    #     robot.head.move_by('head_pan',radians(-90))
+    #     sleep(1.5)
+    #     robot.head.move_by('head_pan',radians(-135))
+    #     sleep(1.5)
+    #     robot.head.move_by('head_pan',radians(-180))
+    #     sleep(1.5)
 
 def trunc(f, n):
     # Truncates/pads a float f to n decimal places without rounding

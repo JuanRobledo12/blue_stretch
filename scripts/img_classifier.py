@@ -20,7 +20,7 @@ from json_handler_class import JSON_Handler
 
 
 import sys
-sys.path.insert(0,'/home/hello-robot/yolov7/')
+sys.path.insert(0,'/home/tony/yolov7/')
 from models.experimental import attempt_load
 from utils.datasets import LoadStreams, LoadImages
 from utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
@@ -31,10 +31,10 @@ from utils.torch_utils import select_device, load_classifier, time_synchronized,
 def detect(new_source,new_project, date_time,img_name,waypoint,save_img=True):
     # source, project, weights, view_img, save_txt, imgsz, trace = new_source, new_project, opt.weights, opt.view_img, opt.save_txt, opt.img_size, not opt.no_trace
     # create instance of class
-    json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=False)
+    json_handler = JSON_Handler(5, '/home/tony/catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=False)
     source, project = new_source, new_project
     
-    weights = '/home/hello-robot/yolov7/yolov7-tiny.pt'
+    weights = '/home/tony/yolov7/yolov7-tiny.pt'
     imgsz = 640
     img_size = 640
     trace = False
