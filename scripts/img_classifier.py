@@ -3,7 +3,7 @@ Description:
 Object detection in captured images using YOLO v7
 
 Last mod: 2023-May-22
-Version: 1
+Version: 2 (edited to include saving of bounding boxes)
 
 '''
 
@@ -142,6 +142,7 @@ def detect(new_source,new_project, date_time,img_name,waypoint,save_img=True):
         # Process detections
         objects_array = []
         confidences_array = []
+        boxes_array = []
 
         for i, det in enumerate(pred):  # detections per image
             if webcam:  # batch_size >= 1
@@ -176,9 +177,13 @@ def detect(new_source,new_project, date_time,img_name,waypoint,save_img=True):
                     if save_img or view_img:  # Add bbox to image
                         label = f'{names[int(cls)]} {conf:.2f}'
                         plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=1)
-
+                        box = [int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])]
+                        
                     # Add confidence to array
                     confidences_array.append(f'{conf:.2f}')
+
+                    # Add box to array
+                    boxes_array.append(box)
 
             # Print time (inference + NMS)
             print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
@@ -212,15 +217,15 @@ def detect(new_source,new_project, date_time,img_name,waypoint,save_img=True):
             new_project = new_project + "/" + img_name
             w = waypoint
             if w == 0:
-                json_handler.add_image_data('waypoint_1',new_project, date_time, objects_array, confidences_array)
+                json_handler.add_image_data('waypoint_1',new_source, date_time, objects_array, confidences_array, boxes_array)
             elif w ==1:
-                json_handler.add_image_data('waypoint_2',new_project, date_time, objects_array, confidences_array)
+                json_handler.add_image_data('waypoint_2',new_source, date_time, objects_array, confidences_array, boxes_array)
             elif w == 2:
-                json_handler.add_image_data('waypoint_3',new_project, date_time, objects_array, confidences_array)
+                json_handler.add_image_data('waypoint_3',new_source, date_time, objects_array, confidences_array, boxes_array)
             elif w == 3:
-                json_handler.add_image_data('waypoint_4',new_project, date_time, objects_array, confidences_array)
+                json_handler.add_image_data('waypoint_4',new_source, date_time, objects_array, confidences_array, boxes_array)
             elif w == 4:
-                json_handler.add_image_data('waypoint_5',new_project, date_time, objects_array, confidences_array)
+                json_handler.add_image_data('waypoint_5',new_source, date_time, objects_array, confidences_array, boxes_array)
 
 
 
