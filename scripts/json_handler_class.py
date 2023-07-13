@@ -101,6 +101,7 @@ class JSON_Handler:
             'time': timestamp,
             'objects': objects,
             'confidences': confidences,
+            'boxes': boxes,
         }
             
         self.dictionary_to_json(self.json_file_name, self.data)
@@ -124,12 +125,15 @@ class JSON_Handler:
                     object_pose = data[waypoint]['pose']
                     img_location = data[waypoint]['name']
                     confidence = value['confidences'][index]
+                    box_coord = value['boxes'][index]
+                    
                     output.append({
                         'path': img_name, 
                         'timestamp': timestamp, 
                         'location': img_location, 
                         'confidence': confidence,
                         'object_pose':object_pose,
+                        'box_coord': box_coord,
                         })
         
         sorted_output = sorted(output, key=lambda x: int(x['timestamp'].replace("_", "")))
