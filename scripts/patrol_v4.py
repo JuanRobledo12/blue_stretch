@@ -51,10 +51,10 @@ json_handler = JSON_Handler(5, '/home/tony/hello_robot_catkin_ws/src/blue_stretc
 
 
 # CHANGE THIS WITH THE SPECIFIC WAYPOINTS AND PICTURES PER WAYPOINTS
-waypoints_num = 2
+waypoints_num = 12
 photos_per_waypoint = 9
 
-rows,cols = (5,photos_per_waypoint)  # (waypoints, photos per waypoint)
+rows,cols = (waypoints_num, photos_per_waypoint)  # (waypoints, photos per waypoint)
 timestamp_array = ([[0 for i in range(cols)] for j in range(rows)])
 
 
@@ -213,7 +213,7 @@ class CollectData():
                         img_counter = 0
                         for endpoint in self.endpoints_ls:
                             self.joint_controller.move_camera(endpoint)
-                            time.sleep(2)
+                            time.sleep(3)
                             self.get_image(loc_idx, img_counter)
                             img_counter += 1
                         self.joint_controller.move_camera([0.0, 0.0])
@@ -242,21 +242,9 @@ class CollectData():
 
             # Classify objects in images
             for w in range(waypoints_num): #Select the correct number of waypoints in your system.
-                if w == 0:
-                    new_project = "/home/tony/yolov7/images_result/waypoint1"
-                    new_source = "/home/tony/yolov7/images_demo/waypoint1/"
-                elif w==1:
-                    new_project = "/home/tony/yolov7/images_result/waypoint2"
-                    new_source = "/home/tony/yolov7/images_demo/waypoint2/"
-                elif w==2:
-                    new_project = "/home/tony/yolov7/images_result/waypoint3"
-                    new_source = "/home/tony/yolov7/images_demo/waypoint3/"
-                elif w==3:
-                    new_project = "/home/tony/yolov7/images_result/waypoint4"
-                    new_source = "/home/tony/yolov7/images_demo/waypoint4/"
-                elif w==4:
-                    new_project = "/home/tony/yolov7/images_result/waypoint5"
-                    new_source = "/home/tony/yolov7/images_demo/waypoint5/"
+                
+                new_project = "/home/tony/yolov7/images_result/waypoint" + str(w + 1)
+                new_source = "/home/tony/yolov7/images_demo/waypoint" + str(w + 1) + "/"
 
                 for i in range(photos_per_waypoint): #change it according to the number of images you take per waypoint
                     img_name = ""
@@ -292,16 +280,7 @@ class CollectData():
     
     def get_image(self,waypoint, img_counter):
         
-        if waypoint == 0:
-            directory = "/home/tony/yolov7/images_demo/waypoint1"
-        elif waypoint==1:
-            directory = "/home/tony/yolov7/images_demo/waypoint2"
-        elif waypoint==2:
-            directory = "/home/tony/yolov7/images_demo/waypoint3"
-        elif waypoint==3:
-            directory = "/home/tony/yolov7/images_demo/waypoint4"
-        elif waypoint==4:
-            directory = "/home/tony/yolov7/images_demo/waypoint5"
+        directory = "/home/tony/yolov7/images_demo/waypoint" + str(waypoint + 1)
                 
         # Wait for frames
         

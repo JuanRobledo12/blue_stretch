@@ -79,7 +79,7 @@ class ImageGallery:
         self.location_label.config(text=location_text_label)
         
         image_path = image_data['path']
-        image = Image.open(image_path).resize((600, 600), Image.ANTIALIAS)
+        image = Image.open(image_path).resize((600, 600), Image.LANCZOS)
         photo = ImageTk.PhotoImage(image)
         self.image_label.config(image=photo)
         self.image_label.image = photo
@@ -110,5 +110,5 @@ class ImageGallery:
 # TEST CODE   
 # ----------------
 
-#test = ImageGallery('book', json_path='/home/hello-robot/catkin_ws/src/blue_stretch/scripts/waypoint_info.json')
-#test.run()
+# test = ImageGallery('cell phone', json_path='/home/tony/hello_robot_catkin_ws/src/blue_stretch/scripts/waypoint_info.json')
+# test.run()

@@ -209,18 +209,8 @@ def detect(new_source,new_project, date_time,img_name,waypoint,save_img=True):
             # Add image data to json
             new_project = new_project + "/" + img_name
             w = waypoint
-            if w == 0:
-                json_handler.add_image_data('waypoint_1',new_project, date_time, objects_array, confidences_array)
-            elif w ==1:
-                json_handler.add_image_data('waypoint_2',new_project, date_time, objects_array, confidences_array)
-            elif w == 2:
-                json_handler.add_image_data('waypoint_3',new_project, date_time, objects_array, confidences_array)
-            elif w == 3:
-                json_handler.add_image_data('waypoint_4',new_project, date_time, objects_array, confidences_array)
-            elif w == 4:
-                json_handler.add_image_data('waypoint_5',new_project, date_time, objects_array, confidences_array)
 
-
+            json_handler.add_image_data('waypoint_' + str(w + 1) ,new_project, date_time, objects_array, confidences_array)
 
     if save_txt or save_img:
         s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
