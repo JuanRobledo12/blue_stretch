@@ -26,7 +26,6 @@ from math import pow, sqrt, radians
 from control_msgs.msg import FollowJointTrajectoryGoal
 from trajectory_msgs.msg import JointTrajectoryPoint
 import hello_helpers.hello_misc as hm
-import stretch_body.robot
 from time import sleep
 from move_robot_body_class import JointController
 
@@ -332,23 +331,6 @@ class CollectData():
         #rospy.sleep(2)
         self.cmd_vel_pub.publish(Twist())
         rospy.sleep(1)
-
-    def rotate_cam(self):
-        robot=stretch_body.robot.Robot()
-        robot.head.move_by('head_tilt',-0.52)
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(45))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(0))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-45))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-90))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-135))
-        sleep(1.5)
-        robot.head.move_by('head_pan',radians(-180))
-        sleep(1.5)
 
 def trunc(f, n):
     # Truncates/pads a float f to n decimal places without rounding

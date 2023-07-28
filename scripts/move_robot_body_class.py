@@ -2,7 +2,7 @@
 
 '''
 Description:
-Python Class to handle Stretch's arm
+Python Class to handle Stretch's camera and arm
 
 
 Last mod: 2023-May-05
