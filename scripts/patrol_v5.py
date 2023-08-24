@@ -5,8 +5,10 @@ Description:
 This is a ROS Node to navigate in a space and take photos on specific waypoints. YOLO V7 is used to classify the objects inside the images and saved them in folders.
 In addition, a JSON file is updated containing all the metadata of the images.
 
-Last mod: 2023-Jul-13
-Version: 4
+This version only collect images, the object detection was removed.
+
+Last mod: 2023-Aug-24
+Version: 5
 
 '''
 
@@ -51,10 +53,10 @@ json_handler = JSON_Handler(5, '/home/hello-robot/catkin_ws/src/blue_stretch/scr
 
 
 # CHANGE THIS WITH THE SPECIFIC WAYPOINTS AND PICTURES PER WAYPOINTS
-waypoints_num = 2
+waypoints_num = 12
 photos_per_waypoint = 9
 
-rows,cols = (5,photos_per_waypoint)  # (waypoints, photos per waypoint)
+rows,cols = (waypoints_num, photos_per_waypoint)  # (waypoints, photos per waypoint)
 timestamp_array = ([[0 for i in range(cols)] for j in range(rows)])
 
 
@@ -149,7 +151,6 @@ class CollectData():
         i = n_locations
         distance_traveled = 0
         start_time = rospy.Time.now()
-        running_time = 0
         location = ""
         last_location = ""
         object_found = False
@@ -157,6 +158,7 @@ class CollectData():
         # Get the initial pose from the user
         rospy.loginfo("*** Click the 2D Pose Estimate button in RViz to set the robot's initial pose...")
         rospy.wait_for_message('initialpose', PoseWithCovarianceStamped)
+        start_time = time.time()
         self.last_location = Pose()
         rospy.Subscriber('initialpose', PoseWithCovarianceStamped, self.update_initial_pose)
         
@@ -213,7 +215,7 @@ class CollectData():
                         img_counter = 0
                         for endpoint in self.endpoints_ls:
                             self.joint_controller.move_camera(endpoint)
-                            time.sleep(2)
+                            time.sleep(3)
                             self.get_image(loc_idx, img_counter)
                             img_counter += 1
                         self.joint_controller.move_camera([0.0, 0.0])
@@ -224,52 +226,42 @@ class CollectData():
                     else:
                       rospy.loginfo("Goal failed with error code: " + str(goal_states[state]))
                 
-                # How long have we been running?
-                running_time = rospy.Time.now() - start_time
-                running_time = running_time.secs / 60.0
                 
                 # Print a summary success/failure, distance traveled and time elapsed
                 rospy.loginfo("Success so far: " + str(n_successes) + "/" + 
                               str(n_goals) + " = " + 
                               str(100 * n_successes/n_goals) + "%")
-                rospy.loginfo("Running time: " + str(trunc(running_time, 1)) + 
-                              " min Distance: " + str(trunc(distance_traveled, 1)) + " m")
                 rospy.sleep(self.rest_time)
             
             ######   CV BEGINS ######
             # Destroy all the windows
             cv2.destroyAllWindows()  
 
+            #################### THIS SECTION IS COMMENTED OUT TO AVOID RUNNING THE OBJECT DETECTOR CLASS ####################
+
             # Classify objects in images
-            for w in range(waypoints_num): #Select the correct number of waypoints in your system.
-                if w == 0:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint1"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint1/"
-                elif w==1:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint2"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint2/"
-                elif w==2:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint3"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint3/"
-                elif w==3:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint4"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint4/"
-                elif w==4:
-                    new_project = "/home/hello-robot/yolov7/images_result/waypoint5"
-                    new_source = "/home/hello-robot/yolov7/images_demo/waypoint5/"
+            # for w in range(waypoints_num): #Select the correct number of waypoints in your system.
+                
+            #     new_project = "/home/tony/yolov7_models/images_result/waypoint" + str(w + 1)
+            #     new_source = "/home/tony/yolov7_models/images_demo/waypoint" + str(w + 1) + "/"
 
-                for i in range(photos_per_waypoint): #change it according to the number of images you take per waypoint
-                    img_name = ""
-                    source=""
-                    img_no = str(i+1)
-                    ####### Print W and I and reduce the W range.
-                    date_time = timestamp_array[w][i]
-                    img_name = str(date_time) + "_img_" + str(img_no) + ".png"
-                    source = new_source + img_name
+            #     for i in range(photos_per_waypoint): #change it according to the number of images you take per waypoint
+            #         img_name = ""
+            #         source=""
+            #         img_no = str(i+1)
+            #         ####### Print W and I and reduce the W range.
+            #         date_time = timestamp_array[w][i]
+            #         img_name = str(date_time) + "_img_" + str(img_no) + ".png"
+            #         source = new_source + img_name
 
-                    detect(source,new_project,date_time,img_name,w)
+            #         detect(source,new_project,date_time,img_name,w)
 
-            rospy.loginfo('OBJECT DETECTION SUCCESFULLY COMPLETED!! You can shutdown the node now...')
+            ######################################################################################################################
+
+            rospy.loginfo('Data Collection Run Completed!!!!!')
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print(f"Total execution time: {elapsed_time:.5f} seconds")
             self.shutdown()
             break
         
@@ -292,20 +284,11 @@ class CollectData():
     
     def get_image(self,waypoint, img_counter):
         
-        if waypoint == 0:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint1"
-        elif waypoint==1:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint2"
-        elif waypoint==2:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint3"
-        elif waypoint==3:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint4"
-        elif waypoint==4:
-            directory = "/home/hello-robot/yolov7/images_demo/waypoint5"
+        directory = "/home/hello-robot/yolov7/images_demo_test/waypoint" + str(waypoint + 1)
                 
         # Wait for frames
         
-        #camera_img_resized = cv2.resize(self.camera_image,(500,500))
+        #camera_img_resized = cv2.resize(self.camera_image, (640, 640))
         camera_img_rotated = cv2.rotate(self.camera_image, cv2.ROTATE_90_CLOCKWISE)
         img_counter = img_counter + 1
 
@@ -343,4 +326,3 @@ if __name__ == '__main__':
         rospy.spin()
     except rospy.ROSInterruptException:
         rospy.loginfo("AMCL navigation test finished.")
-
