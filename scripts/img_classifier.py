@@ -20,7 +20,7 @@ from json_handler_class import JSON_Handler
 
 
 import sys
-sys.path.insert(0,'/home/tony/yolov7/')
+sys.path.insert(0,'/home/tony/yolov7_models/yolov7_standard/yolov7/')  # CHANGE IT TO THE MODEL YOU ARE USING
 from models.experimental import attempt_load
 from utils.datasets import LoadStreams, LoadImages
 from utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
@@ -34,15 +34,25 @@ def detect(new_source,new_project, date_time,img_name,waypoint,save_img=True):
     json_handler = JSON_Handler(5, '/home/tony/hello_robot_catkin_ws/src/blue_stretch/scripts/waypoint_info.json', new_json=False)
     source, project = new_source, new_project
     
+    standard_weights = '/home/tony/yolov7_models/yolov7_standard/yolov7/yolov7.pt'
+    keys_phone_wallet_weights = '/home/tony/yolov7_models/yolov7_custom/yolov7/runs/train/exp4/weights/best.pt'
+    keys_only_weights = '/home/tony/yolov7_models/yolov7_keys_detector/yolov7/runs/train/exp2/weights/best.pt'
+    wallet_only_weights = '/home/tony/yolov7_models/yolov7_wallet_detector/yolov7/runs/train/exp/weights/best.pt'
+    
+    
+    # CHANGE PATHS TO THE MODEL YOU want to use.
+    
     #weights = '/home/tony/yolov7/yolov7-tiny.pt' #Enable it to use tiny weights
-    #weights = '/home/tony/yolov7/yolov7.pt' #Enable it to use full weights
-    weights = '/home/tony/yolov7/yolov7-e6e.pt'
+    weights = standard_weights #Enable it to use full weights
+    #weights = '/home/tony/yolov7/yolov7-e6e.pt'
+    
+    
     imgsz = 640
     img_size = 640
     trace = False
     conf_thres=0.25
     iou_thres=0.45
-    device='cpu'
+    device = 'cpu'
     view_img=False
     save_txt=False
     save_img = True

@@ -11,7 +11,7 @@ Version: 2
 import os
 import json
 
-MAX_IMAGE_STORAGE = 5
+MAX_IMAGE_STORAGE = 9
 JSON_FILE_NAME = '/home/tony/hello_robot_catkin_ws/src/blue_stretch/scripts/waypoint_info.json'
 
 class JSON_Handler:

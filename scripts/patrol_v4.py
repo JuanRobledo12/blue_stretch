@@ -149,7 +149,6 @@ class CollectData():
         i = n_locations
         distance_traveled = 0
         start_time = rospy.Time.now()
-        running_time = 0
         location = ""
         last_location = ""
         object_found = False
@@ -157,6 +156,7 @@ class CollectData():
         # Get the initial pose from the user
         rospy.loginfo("*** Click the 2D Pose Estimate button in RViz to set the robot's initial pose...")
         rospy.wait_for_message('initialpose', PoseWithCovarianceStamped)
+        start_time = time.time()
         self.last_location = Pose()
         rospy.Subscriber('initialpose', PoseWithCovarianceStamped, self.update_initial_pose)
         
@@ -224,16 +224,11 @@ class CollectData():
                     else:
                       rospy.loginfo("Goal failed with error code: " + str(goal_states[state]))
                 
-                # How long have we been running?
-                running_time = rospy.Time.now() - start_time
-                running_time = running_time.secs / 60.0
                 
                 # Print a summary success/failure, distance traveled and time elapsed
                 rospy.loginfo("Success so far: " + str(n_successes) + "/" + 
                               str(n_goals) + " = " + 
                               str(100 * n_successes/n_goals) + "%")
-                rospy.loginfo("Running time: " + str(trunc(running_time, 1)) + 
-                              " min Distance: " + str(trunc(distance_traveled, 1)) + " m")
                 rospy.sleep(self.rest_time)
             
             ######   CV BEGINS ######
@@ -241,23 +236,26 @@ class CollectData():
             cv2.destroyAllWindows()  
 
             # Classify objects in images
-            for w in range(waypoints_num): #Select the correct number of waypoints in your system.
+            # for w in range(waypoints_num): #Select the correct number of waypoints in your system.
                 
-                new_project = "/home/tony/yolov7/images_result/waypoint" + str(w + 1)
-                new_source = "/home/tony/yolov7/images_demo/waypoint" + str(w + 1) + "/"
+            #     new_project = "/home/tony/yolov7_models/images_result/waypoint" + str(w + 1)
+            #     new_source = "/home/tony/yolov7_models/images_demo/waypoint" + str(w + 1) + "/"
 
-                for i in range(photos_per_waypoint): #change it according to the number of images you take per waypoint
-                    img_name = ""
-                    source=""
-                    img_no = str(i+1)
-                    ####### Print W and I and reduce the W range.
-                    date_time = timestamp_array[w][i]
-                    img_name = str(date_time) + "_img_" + str(img_no) + ".png"
-                    source = new_source + img_name
+            #     for i in range(photos_per_waypoint): #change it according to the number of images you take per waypoint
+            #         img_name = ""
+            #         source=""
+            #         img_no = str(i+1)
+            #         ####### Print W and I and reduce the W range.
+            #         date_time = timestamp_array[w][i]
+            #         img_name = str(date_time) + "_img_" + str(img_no) + ".png"
+            #         source = new_source + img_name
 
-                    detect(source,new_project,date_time,img_name,w)
+            #         detect(source,new_project,date_time,img_name,w)
 
             rospy.loginfo('OBJECT DETECTION SUCCESFULLY COMPLETED!! You can shutdown the node now...')
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print(f"Total execution time: {elapsed_time:.5f} seconds")
             self.shutdown()
             break
         
@@ -280,11 +278,12 @@ class CollectData():
     
     def get_image(self,waypoint, img_counter):
         
-        directory = "/home/tony/yolov7/images_demo/waypoint" + str(waypoint + 1)
+        directory = "/home/tony/yolov7_models/images_demo_9/waypoint" + str(waypoint + 1)
                 
         # Wait for frames
         
-        camera_img_rotated = cv2.rotate(self.camera_image, cv2.ROTATE_90_CLOCKWISE)
+        camera_img_resized = cv2.resize(self.camera_image, (640, 640))
+        camera_img_rotated = cv2.rotate(camera_img_resized, cv2.ROTATE_90_CLOCKWISE)
         img_counter = img_counter + 1
 
         # Get time
